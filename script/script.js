@@ -26,19 +26,19 @@ function computerPlay() {
 
 function playRound(playerSelection, computerSelection) {
   if (playerSelection === computerSelection) {
-    return 'Draw!';
+    return 'あいこ';
   } else if ((playerSelection == "rock") && (computerSelection == "scissors")) {
-    return "Player won!";
+    return "Player1の勝ち！";
   } else if ((playerSelection == "paper") && (computerSelection == "rock")) {
-    return "Player won!";
+    return "Player1の勝ち！";
   } else if ((playerSelection == "scissors") && (computerSelection == "paper")) {
-    return "Player won!";
+    return "Player1の勝ち！";
   } else if ((playerSelection == "paper") && (computerSelection == "scissors")) {
-    return "Computer won!";
+    return "Computerの勝ち！";
   } else if ((playerSelection == "scissors") && (computerSelection == "rock")) {
-    return "Computer won!";
+    return "Computerの勝ち！";
   } else if ((playerSelection == "rock") && (computerSelection == "paper")) {
-    return "Computer won!";
+    return "Computerの勝ち！";
   }
 }
 
@@ -66,29 +66,29 @@ function selection(playerSelection) {
 function displaySelection(player, selection, result) {
   if (player === 'player') {
     playerSelect.innerHTML = `<i class="fas fa-hand-${selection}"></i>`;
-    if (result === "Player won!") {
+    if (result === "Player1の勝ち！") {
       playerSelect.style.color = 'green';
       compSelect.style.color = 'red';
     }
   } else {
     compSelect.innerHTML = `<i class="fas fa-hand-${selection}"></i>`;
-    if (result === "Computer won!") {
+    if (result === "Computerの勝ち！") {
       compSelect.style.color = 'green';
       playerSelect.style.color = 'red';
     }
   }
-  if (result === 'Draw!') {
+  if (result === 'あいこ') {
     compSelect.style.color = '';
     playerSelect.style.color = '';
   }
 }
 
 function scoreBoard(result) {
-  if (result === "Player won!") {
+  if (result === "Player1の勝ち！") {
     playerScore++;
     pScore.innerText = playerScore;
     cScore.innerText = computerScore;
-  } else if (result === "Computer won!") {
+  } else if (result === "Computerの勝ち！") {
     computerScore++;
     pScore.innerText = playerScore;
     cScore.innerText = computerScore;
@@ -107,9 +107,9 @@ function endGame() {
 function whoWon() {
   if (endGame()) {
     if (playerScore === 5) {
-      message.innerText = 'Player is the Winner! Congratulations!'
+      message.innerText = 'Player1の勝利！おめでとう！'
     } else {
-      message.innerText = 'Computer is the Winner! You Lose!'
+      message.innerText = 'Computerの勝利！残念でした〜'
     }
   }
 }

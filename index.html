@@ -10,18 +10,18 @@
   </head>
   <body>
     <nav class="navbar navbar-dark bg-dark">
-      <span class="navbar-brand mb-0 h1">Rock Paper Scissors</span>
+      <span class="navbar-brand mb-0 h1">じゃんけんゲーム Ver1.1</span>
       <!-- Button trigger modal -->
       <button type="button" class="btn btn-dark" data-toggle="modal" data-target="#exampleModalCenter">
-        Instructions
+        ルール説明
       </button>
     </nav>
     <div class="text-center mt-3">
-      <h1>WELCOME TO ROCK PAPER SCISSORS GAME!</h1>
+      <h1>先に５勝した方が勝利！</h1>
     </div>
     <div id="message" class="text-center h5"></div>
     <div class="text-center m-5" id="start">
-      <input type="submit" id="submit" class="btn btn-dark" value="Get Started!">
+      <input type="submit" id="submit" class="btn btn-dark" value="じゃんけんスタート！">
     </div>
     <div id="boards" class="boards">
       <div class="row">        
@@ -53,20 +53,19 @@
         <div class="modal-dialog modal-dialog-centered" role="document">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLongTitle">Game Instructions</h5>
+              <h5 class="modal-title" id="exampleModalLongTitle">ルール説明</h5>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
             <div class="modal-body">
               <ul class="list-group">
-                <li class="list-group-item list-group-item-dark">Click 'Get Started' button.</li>
-                <li class="list-group-item list-group-item-dark">Choose between Rock, Paper or Scissors by clicking in the icon.</li>
-                <li class="list-group-item list-group-item-dark"><i class="fas fa-hand-rock"></i> Rock beats Scissors.</li>
-                <li class="list-group-item list-group-item-dark"><i class="fas fa-hand-scissors"></i> Scissors beats Paper.</li>
-                <li class="list-group-item list-group-item-dark"><i class="fas fa-hand-paper"></i> Paper beats Rock.</li>
-                <li class="list-group-item list-group-item-dark">First player to win 5 rounds is the winner.</li>
-                <li class="list-group-item list-group-item-dark">Play again!</li>
+                <li class="list-group-item list-group-item-dark">「じゃんけんスタート」を押すとゲームが始まります。</li>
+                <li class="list-group-item list-group-item-dark"><i class="fas fa-hand-rock"></i><i class="fas fa-hand-scissors"></i><i class="fas fa-hand-paper"></i>から選択しましょう！</li>
+                <li class="list-group-item list-group-item-dark"><i class="fas fa-hand-rock"></i> は<i class="fas fa-hand-scissors"></i>に、</li>
+                <li class="list-group-item list-group-item-dark"><i class="fas fa-hand-scissors"></i>は<i class="fas fa-hand-paper"></i>に、</li>
+                <li class="list-group-item list-group-item-dark"><i class="fas fa-hand-paper"></i>は<i class="fas fa-hand-rock"></i>に勝てます。</li>
+                <li class="list-group-item list-group-item-dark">先に５勝した方が勝利！ Good Luck！！</li>
               </ul>
             </div>
             <div class="modal-footer">
@@ -77,8 +76,8 @@
     </div>    
     <!-- end Modal -->
     <footer class="bg-dark">
-      <p>Author:&copy; JaviCorp<br>
-        <a href="mailto:hege@example.com">javicorp@example.com</a></p>
+      <p>Author:&copy; HirokiHashi<br>
+        <a href="https://docs.google.com/presentation/d/17OPLG6zhPZBCnnCD4nsiw8gsU6CV9afrDKXLlyiIG2E/edit?usp=sharing">職業人講話 2021/10/13</a></p>
     </footer>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
