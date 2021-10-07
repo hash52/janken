@@ -117,15 +117,8 @@ function whoWon() {
 function reset() {
   if (endGame()) {
     setTimeout(function(){
-      playerScore = 0;
-      computerScore = 0;
-      compSelect.innerHTML = '';
-      playerSelect.innerHTML = '';
-      pScore.innerText = playerScore;
-      cScore.innerText = computerScore;
-      message.innerText = 'Play Again!';
-      gameActive = false;
-    }, 3000);    
+      location.reload();
+    }, 3000);
   }
 }
 
