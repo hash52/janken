@@ -50,8 +50,10 @@ function gameFlow(playerSelection) {
   displaySelection('computer', compMov, result);
   scoreBoard(result);
   message.innerText = result;
-  whoWon();
-  reset();
+  if(endGame()){
+    whoWon();
+    reload();
+  }
 }
 
 function selection(playerSelection) {
@@ -98,28 +100,21 @@ function scoreBoard(result) {
 }
 
 function endGame() {
-  if (playerScore === 5 || computerScore === 5) {
-    return true
-  }
-  return false;
+  return playerScore === 5 || computerScore === 5;
 }
 
 function whoWon() {
-  if (endGame()) {
-    if (playerScore === 5) {
-      message.innerText = 'Player1の勝利！おめでとう！'
-    } else {
-      message.innerText = 'Computerの勝利！残念でした〜'
-    }
+  if (playerScore === 5) {
+    message.innerText = 'Player1の勝利！おめでとう！'
+  } else {
+    message.innerText = 'Computerの勝利！残念でした〜'
   }
 }
 
-function reset() {
-  if (endGame()) {
-    setTimeout(function(){
-      location.reload();
-    }, 3000);
-  }
+function reload() {
+  setTimeout(function(){
+    location.reload();
+  }, 3000);
 }
 
 const submit = document.getElementById('submit');
