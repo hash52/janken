@@ -67,7 +67,7 @@ function displaySelection(playerType, selection) {
       break;
   }
   displayed.innerHTML = `<i class="fas fa-hand-${selection}"></i>`;
-  playerSelect.style.color = '';
+  displayed.style.color = '';
 }
 
 function displayResult(playerSelection,computerSelection,result){
@@ -87,11 +87,12 @@ function displayResult(playerSelection,computerSelection,result){
   }
 }
 
-function resetSlection(){
+function resetDisplay(){
   playerSelect.innerHTML = '';
   compSelect.innerHTML = '';
   playerSelect.style.color = '';
   compSelect.style.color = '';
+  message.innerHTML = '　';
 }
 
 function scoreBoard(result) {
@@ -139,6 +140,7 @@ function initBoards() {
   select.style.display = 'block';
   pScore.innerText = playerScore;
   cScore.innerText = computerScore;
+  message.innerHTML = '　'; //１行確保するために空白を入れておく
 }
 
 function wait(ms) {
@@ -173,17 +175,29 @@ startGameButton.addEventListener('click', (e)=>{
 });
 
 async function gameFlow(){
-  while(!endGame()){
-    resetSlection();
+  //ゲームが終わるまで繰り返す ※ while = ~している間
+  while(!endGame()){ // ※ ! = ~じゃない時 (コンピュータ語)
+    //画面の表示をリセット
+    resetDisplay();
+    //コンピュータが手を選択
     let computerSelection = computerPlay();
+    //コンピュータの手の表示
     displaySelection(COM, computerSelection);
+    //プレイヤーが手を選ぶまで一時停止
     let playerSelection = await Promise.any([selectRock(), selectPaper(), selectScissors()]);
+    //じゃんけんの結果を取得 ※ playRound = ひと勝負する
     let result = playRound(playerSelection, computerSelection);
+    //じゃんけんの結果を表示
     displayResult(playerSelection, computerSelection, result);
+    //スコアの表示
     scoreBoard(result);
+    //メッセージの表示
     message.innerText = result;
+    //1.5秒一時停止
     await wait(1500);
   }
+  //勝った人を表示する
   whoWon();
+  //ページを読み込み直して最初の画面に戻る
   reload();
 }
