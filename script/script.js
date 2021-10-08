@@ -8,7 +8,8 @@ const playerSelect = document.getElementById('playerSelect');
 const message = document.getElementById('message');
 const victoryCondition = document.getElementById('victory-condition');
 
-const VICTORY_SCORE = 5;
+const VICTORY_SCORE = 2;
+
 
 const ROCK = 'rock';
 const PAPER = 'paper';
