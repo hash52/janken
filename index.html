@@ -10,7 +10,7 @@
   </head>
   <body>
     <nav class="navbar navbar-dark bg-dark">
-      <span class="navbar-brand mb-0 h1">じゃんけんゲーム Ver1.2</span>
+      <span class="navbar-brand mb-0 h1">東京卍リベンじゃんけん (じゃんけんゲームVer2.0)</span>
       <!-- Button trigger modal -->
       <button type="button" class="btn btn-dark" data-toggle="modal" data-target="#exampleModalCenter">
         ルール説明
@@ -27,34 +27,42 @@
       <div class="row">        
         <div class="col offset-1 border p-0"> 
           <div class="row">
-            <div class="col-8">
+            <div class="col-8 border-right">
               <h3 id="playerScore" class="text-center my-3"></h3>
               <h1 class="text-center my-3">Player1</h1>  
-              <div>
-                <img class="img-fluid" src="assets/player/face.jpg">
-              </div>   
+              <img class="img-fluid" src="assets/player/face.jpg">
             </div>
-            <div class="col-4 d-flex align-items-center justify-content-center border-left">
+            <div class="col-4 d-flex align-items-center justify-content-center">
               <div id="playerSelect"></div>
             </div>
           </div>
           <div class="dialogue-box border-top p-2" id="player-dialog">
-            <h1>aaaaa</h1>
-            <h1>aaaaa</h1>
-            <h1>aaaaa</h1>
+            <h2>aaaaa</h2>
+            <h2>aaaaa</h2>
+            <h2>aaaaa</h2>
           </div>
         </div>
         <div class="col-1 d-flex align-items-center justify-content-center">
           <h2>VS</h2>
         </div>
-        <div class="col text-center p-0"> 
-          <h1 class="text-center my-3">Computer</h1> 
-          <div id='computerSide'>
-            <h3 id="computerScore"></h3>
-            <div id="computerSelect"></div>
-          </div>       
+        <div class="col border p-0"> 
+          <div class="row">
+            <div class="col-4 d-flex align-items-center justify-content-center">
+              <div id="computerSelect"></div>
+            </div>
+            <div class="col-8 border-left">
+              <h3 id="computerScore" class="text-center my-3"></h3>
+              <h1 class="text-center my-3">COM</h1>  
+              <img class="img-fluid" src="assets/charactors/佐野万次郎/face.jpg">
+            </div>
+          </div>
+          <div class="dialogue-box border-top p-2" id="player-dialog">
+            <h2>bbbb</h2>
+            <h2>bbbbb</h2>
+            <h2>bbbbbb</h2>
+          </div>
         </div>
-      </div>
+        <div class="col-1"></div>
     </div>
     <div id="select" class="text-center w-50 mx-auto my-3 select">
       <div class="row">
