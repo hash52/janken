@@ -25,14 +25,29 @@
     </div>
     <div id="boards" class="boards">
       <div class="row">        
-        <div class="col-6 text-center"> 
-          <h1 class="text-center my-3">Player1</h1>  
-          <div id='playerSide'>
-            <h3 id="playerScore"></h3>
-            <div id="playerSelect"></div>
-          </div>  
+        <div class="col offset-1 border p-0"> 
+          <div class="row">
+            <div class="col-8">
+              <h3 id="playerScore" class="text-center my-3"></h3>
+              <h1 class="text-center my-3">Player1</h1>  
+              <div>
+                <img class="img-fluid" src="assets/player/face.jpg">
+              </div>   
+            </div>
+            <div class="col-4 d-flex align-items-center justify-content-center border-left">
+              <div id="playerSelect"></div>
+            </div>
+          </div>
+          <div class="dialogue-box border-top p-2" id="player-dialog">
+            <h1>aaaaa</h1>
+            <h1>aaaaa</h1>
+            <h1>aaaaa</h1>
+          </div>
         </div>
-        <div class="col-6 text-center p-0"> 
+        <div class="col-1 d-flex align-items-center justify-content-center">
+          <h2>VS</h2>
+        </div>
+        <div class="col text-center p-0"> 
           <h1 class="text-center my-3">Computer</h1> 
           <div id='computerSide'>
             <h3 id="computerScore"></h3>
