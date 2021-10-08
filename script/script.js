@@ -42,29 +42,6 @@ function playRound(playerSelection, computerSelection) {
   }
 }
 
-function gameFlow(playerSelection) {
-  const winner = selection(playerSelection);
-  const result = winner.winner;
-  const compMov = winner.compMove;
-  displaySelection('player', playerSelection, result);
-  displaySelection('computer', compMov, result);
-  scoreBoard(result);
-  message.innerText = result;
-  if(endGame()){
-    whoWon();
-    reload();
-  }
-}
-
-function selection(playerSelection) {
-  let computer = computerPlay();
-  let winner = playRound(playerSelection, computer)
-  return {
-    winner: winner,
-    compMove: computer
-  };
-}
-
 function displaySelection(player, selection, result) {
   if (player === 'player') {
     playerSelect.innerHTML = `<i class="fas fa-hand-${selection}"></i>`;
@@ -117,22 +94,56 @@ function reload() {
   }, 3000);
 }
 
-const submit = document.getElementById('submit');
-submit.addEventListener('click', displayBoards.bind(this));
 
-function displayBoards() {
+function initBoards() {
   const start = document.getElementById('start');
   const boards = document.getElementById('boards');
   const select = document.getElementById('select');
   start.style.display = 'none';
   boards.style.display = 'block';
   select.style.display = 'block';
+  pScore.innerText = playerScore;
+  cScore.innerText = computerScore;
   gameActive = true;
 }
+
 const rock = document.getElementById('rock');
 const paper = document.getElementById('paper');
 const scissors = document.getElementById('scissors');
+const startGame = document.getElementById('startGame');
 
-rock.addEventListener('click', gameFlow.bind(this, rock.id));
-paper.addEventListener('click', gameFlow.bind(this, paper.id));
-scissors.addEventListener('click', gameFlow.bind(this, scissors.id));
+function selectRock(){
+  return new Promise(resolve => {
+    rock.addEventListener("click", (e)=>{resolve(e.currentTarget.id)});
+  })
+}
+
+function selectPaper(){
+  return new Promise(resolve => {
+    paper.addEventListener("click", (e)=>{resolve(e.currentTarget.id)});
+  })
+}
+function selectScissors(){
+  return new Promise(resolve => {
+    scissors.addEventListener("click", (e)=>{resolve(e.currentTarget.id)});
+  })
+}
+
+startGame.addEventListener('click', (e)=>{
+  initBoards();
+  gameFlow();
+});
+
+const gameFlow = async () => {
+  while(!endGame()){
+    let playerSelection = await Promise.any([selectRock(), selectPaper(), selectScissors()]);
+    let computerSelection = computerPlay();
+    let result = playRound(playerSelection, computerSelection);
+    displaySelection('player', playerSelection, result);
+    displaySelection('computer', computerSelection, result);
+    scoreBoard(result);
+    message.innerText = result;
+  }
+  whoWon();
+  reload();
+}
