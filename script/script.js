@@ -45,21 +45,35 @@ function playRound(playerSelection, computerSelection) {
 function displaySelection(player, selection, result) {
   if (player === 'player') {
     playerSelect.innerHTML = `<i class="fas fa-hand-${selection}"></i>`;
-    if (result === "Player1の勝ち！") {
-      playerSelect.style.color = 'green';
-      compSelect.style.color = 'red';
-    }
+    playerSelect.style.color = '';
   } else {
     compSelect.innerHTML = `<i class="fas fa-hand-${selection}"></i>`;
-    if (result === "Computerの勝ち！") {
-      compSelect.style.color = 'green';
-      playerSelect.style.color = 'red';
-    }
+    compSelect.style.color = '';
+  }
+}
+
+function displayResult(playerSelection,computerSelection,result){
+  playerSelect.innerHTML = `<i class="fas fa-hand-${playerSelection}"></i>`;
+  compSelect.innerHTML = `<i class="fas fa-hand-${computerSelection}"></i>`;
+  if (result === "Player1の勝ち！") {
+    playerSelect.style.color = 'green';
+    compSelect.style.color = 'red';
+  }
+  if (result === "Computerの勝ち！") {
+    compSelect.style.color = 'green';
+    playerSelect.style.color = 'red';
   }
   if (result === 'あいこ') {
     compSelect.style.color = '';
     playerSelect.style.color = '';
   }
+}
+
+function resetSlection(){
+  playerSelect.innerHTML = '';
+  compSelect.innerHTML = '';
+  playerSelect.style.color = '';
+  compSelect.style.color = '';
 }
 
 function scoreBoard(result) {
@@ -107,10 +121,14 @@ function initBoards() {
   gameActive = true;
 }
 
+function wait(ms) {
+  return new Promise( resolve => { setTimeout( resolve, ms ) } );
+}
+
 const rock = document.getElementById('rock');
 const paper = document.getElementById('paper');
 const scissors = document.getElementById('scissors');
-const startGame = document.getElementById('startGame');
+const startGameButton = document.getElementById('startGame');
 
 function selectRock(){
   return new Promise(resolve => {
@@ -129,20 +147,22 @@ function selectScissors(){
   })
 }
 
-startGame.addEventListener('click', (e)=>{
+startGameButton.addEventListener('click', (e)=>{
   initBoards();
   gameFlow();
 });
 
-const gameFlow = async () => {
+async function gameFlow(){
   while(!endGame()){
-    let playerSelection = await Promise.any([selectRock(), selectPaper(), selectScissors()]);
+    resetSlection();
     let computerSelection = computerPlay();
+    displaySelection('computer', computerSelection, null);
+    let playerSelection = await Promise.any([selectRock(), selectPaper(), selectScissors()]);
     let result = playRound(playerSelection, computerSelection);
-    displaySelection('player', playerSelection, result);
-    displaySelection('computer', computerSelection, result);
+    displayResult(playerSelection, computerSelection, result);
     scoreBoard(result);
     message.innerText = result;
+    await wait(1500);
   }
   whoWon();
   reload();
