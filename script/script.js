@@ -95,7 +95,7 @@ function resetDisplay(){
   compSelect.innerHTML = '';
   playerSelect.style.color = '';
   compSelect.style.color = '';
-  message.innerHTML = '　';
+  message.innerHTML = 'じゃ〜んけ〜ん・・';
 }
 
 function scoreBoard(result) {
@@ -121,9 +121,9 @@ function endGame() {
 
 function whoWon() {
   if (playerScore === VICTORY_SCORE) {
-    message.innerText = 'おめでとう！Player1の勝利！'
+    alert('おめでとう！Player1の勝利！');
   } else {
-    message.innerText = 'Computerの勝利！残念でした〜'
+    alert('Computerの勝利！残念でした〜');
   }
 }
 
@@ -183,12 +183,17 @@ async function gameFlow(){
   while(!endGame()){ // ※ ! = ~じゃない時 (コンピュータ語)
     //画面の表示をリセット
     resetDisplay();
+    //プレイヤーが手を選ぶまで一時停止
+    let playerSelection = await Promise.any([selectRock(), selectPaper(), selectScissors()]);
+    //プレイヤーの手の表示
+    displaySelection(PLAYER, playerSelection);
     //コンピュータが手を選択
     let computerSelection = computerPlay();
     //コンピュータの手の表示
     displaySelection(COM, computerSelection);
-    //プレイヤーが手を選ぶまで一時停止
-    let playerSelection = await Promise.any([selectRock(), selectPaper(), selectScissors()]);
+    message.innerHTML += 'ぽんっ！';
+    //1秒一時停止
+    await wait(1000);
     //じゃんけんの結果を取得 ※ playRound = ひと勝負する
     let result = playRound(playerSelection, computerSelection);
     //じゃんけんの結果を表示
@@ -198,7 +203,7 @@ async function gameFlow(){
     //メッセージの表示
     message.innerText = result;
     //1.5秒一時停止
-    await wait(1500);
+    await wait(2000);
   }
   //勝った人を表示する
   whoWon();
