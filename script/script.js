@@ -1,3 +1,16 @@
+//外部モジュール化はサーバーを立てないと不可
+class Charactor{
+  constructor(name, imagePath, life, lv, type){
+      this.name = name;
+      this.face = imagePath;
+      this.life = life;
+      this.lv = lv;
+      this.type = type;
+  }
+  static COM = 0;
+  static PLAYER = 1;
+}
+
 let playerScore = 0;
 let computerScore = 0;
 
@@ -10,13 +23,15 @@ const victoryCondition = document.getElementById('victory-condition');
 
 const VICTORY_SCORE = 2;
 
-
 const ROCK = 'rock';
 const PAPER = 'paper';
 const SCISSORS = 'scissors';
 
-const PLAYER = 'player';
-const COM = 'computer';
+//index.htmlから見た相対パス
+const ASSET_PATH = './assets/charactors/'
+
+const player = new Charactor("タケミッチ", `${ASSET_PATH}takemichi/face.jpg`, 3, 1, Charactor.PLAYER);
+const com = new Charactor("佐野万次郎", `${ASSET_PATH}maiki/face.jpg`, 3, 50, Charactor.COM);;
 
 const WINNER_COLOR = 'green';
 const LOSER_COLOR = 'red';
@@ -60,13 +75,13 @@ function playRound(playerSelection, computerSelection) {
   }
 }
 
-function displaySelection(playerType, selection) {
+function displaySelection(charactor, selection) {
   let displayed;
-  switch(playerType){
-    case PLAYER:
+  switch(charactor.type){
+    case Charactor.PLAYER:
       displayed = playerSelect;
       break;
-    case COM:
+    case Charactor.COM:
       displayed = compSelect;
       break;
   }
@@ -135,10 +150,13 @@ function reload() {
 }
 
 
-function initBoards() {
+async function initBoards() {
   const start = document.getElementById('start');
   const boards = document.getElementById('boards');
   const select = document.getElementById('select');
+  const comName = document.getElementById('com-name');
+  const comImg = document.getElementById('com-img');
+
   start.style.display = 'none';
   boards.style.display = 'block';
   select.style.display = 'block';
@@ -146,6 +164,10 @@ function initBoards() {
   cScore.innerText = computerScore;
   victoryCondition.innerHTML = `先に${VICTORY_SCORE}勝した方が勝利！`
   message.innerHTML = '　'; //１行確保するために空白を入れておく
+
+  await wait(1000);
+  comName.innerHTML += com.name;
+  comImg.src = com.face;
 }
 
 function wait(ms) {
@@ -180,34 +202,20 @@ startGameButton.addEventListener('click', (e)=>{
 });
 
 async function gameFlow(){
-  //ゲームが終わるまで繰り返す ※ while = ~している間
-  while(!endGame()){ // ※ ! = ~じゃない時 (コンピュータ語)
-    //画面の表示をリセット
+  while(!endGame()){
     resetDisplay();
-    //プレイヤーが手を選ぶまで一時停止
     let playerSelection = await Promise.any([selectRock(), selectPaper(), selectScissors()]);
-    //プレイヤーの手の表示
-    displaySelection(PLAYER, playerSelection);
-    //コンピュータが手を選択
+    displaySelection(player, playerSelection);
     let computerSelection = computerPlay();
-    //コンピュータの手の表示
-    displaySelection(COM, computerSelection);
+    displaySelection(com, computerSelection);
     message.innerHTML += 'ぽんっ！';
-    //1秒一時停止
     await wait(1000);
-    //じゃんけんの結果を取得 ※ playRound = ひと勝負する
     let result = playRound(playerSelection, computerSelection);
-    //じゃんけんの結果を表示
     displayResult(playerSelection, computerSelection, result);
-    //スコアの表示
     scoreBoard(result);
-    //メッセージの表示
     message.innerText = result;
-    //1.5秒一時停止
     await wait(2000);
   }
-  //勝った人を表示する
   whoWon();
-  //ページを読み込み直して最初の画面に戻る
   reload();
 }
