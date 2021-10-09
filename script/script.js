@@ -16,7 +16,15 @@ class Charactor{
     this.maxLife = maxLife;
   }
 
-  getLostLife(){
+  lostLife(){
+    if(this.lv < 50){
+      this.life--;
+    }else{
+      this.life -= 0.5;
+    }
+  }
+
+  getLostLifeInThisGame(){
     return this.maxLife - this.life;
   }
 }
@@ -40,6 +48,7 @@ const CHARACTOR_ASSET_PATH = `${ASSET_PATH}charactors/`;
 
 const HEART = `<img src=${ASSET_PATH}heart.jpg class='col img-fluid p-0'>`;
 const HEART_EMPTY = `<img src=${ASSET_PATH}heart-empty.jpg class='col img-fluid p-0'>`;
+const HEART_HALF = `<img src=${ASSET_PATH}heart-half.jpg class='col img-fluid p-0'>`;
 
 const player = new Charactor("タケミッチ", `${CHARACTOR_ASSET_PATH}takemichi/face.jpg`, 3, 1, Charactor.PLAYER);
 const com = new Charactor("佐野万次郎", `${CHARACTOR_ASSET_PATH}maiki/face.jpg`, 3, 50, Charactor.COM);;
@@ -128,11 +137,11 @@ function resetSelectionDisplay(){
 function reflectLifeGuageBy(result) {
   switch(result){
     case PLAYER_WIN:
-      com.life--;
+      com.lostLife();
       displayLifeGauge(com);
       break;
     case COM_WIN:
-      player.life--;
+      player.lostLife();
       displayLifeGauge(player);
       break;
   }
@@ -167,15 +176,17 @@ function displayLifeGauge(charactor){
       break;
   }
   let lifeGauge = ``;
-  for(let i = 0; i < charactor.life; i++){
+  for(let i = 1; i <= charactor.life; i++){
     lifeGauge += HEART;
   }
-  for(let i =0; i < charactor.getLostLife(); i++){
+  if(!Number.isInteger(charactor.life)){
+    lifeGauge += HEART_HALF;
+  }
+  for(let i = 1; i <= charactor.getLostLifeInThisGame(); i++){
     lifeGauge += HEART_EMPTY;
   }
   displayed.innerHTML = lifeGauge;
 }
-
 
 async function initBoards() {
   const start = document.getElementById('start');
