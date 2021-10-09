@@ -14,14 +14,11 @@ class Charactor{
 let playerScore = 0;
 let computerScore = 0;
 
-const pScore = document.getElementById('playerScore');
-const cScore = document.getElementById('computerScore');
+const pLife = document.getElementById('player-life');
+const cLife = document.getElementById('com-life');
 const compSelect = document.getElementById('computerSelect');
 const playerSelect = document.getElementById('playerSelect');
 const message = document.getElementById('message');
-const victoryCondition = document.getElementById('victory-condition');
-
-const VICTORY_SCORE = 2;
 
 const ROCK = 'rock';
 const PAPER = 'paper';
@@ -117,26 +114,22 @@ function resetDisplay(){
 function scoreBoard(result) {
   switch(result){
     case PLAYER_WIN:
-      playerScore++;
-      pScore.innerText = playerScore;
-      cScore.innerText = computerScore;
+      com.life--;
       break;
     case COM_WIN:
-      computerScore++;
-      pScore.innerText = playerScore;
-      cScore.innerText = computerScore;
-      break;
-    case DRAW:
+      player.life--;
       break;
   }
+  pLife.innerText = player.life;
+  cLife.innerText = com.life;
 }
 
 function endGame() {
-  return playerScore === VICTORY_SCORE || computerScore === VICTORY_SCORE;
+  return player.life == 0 || com.life == 0;
 }
 
 function whoWon() {
-  if (playerScore === VICTORY_SCORE) {
+  if (com.life === 0) {
     alert('おめでとう！Player1の勝利！');
   } else {
     alert('Computerの勝利！残念でした〜');
@@ -160,9 +153,8 @@ async function initBoards() {
   start.style.display = 'none';
   boards.style.display = 'block';
   select.style.display = 'block';
-  pScore.innerText = playerScore;
-  cScore.innerText = computerScore;
-  victoryCondition.innerHTML = `先に${VICTORY_SCORE}勝した方が勝利！`
+  pLife.innerText = player.life;
+  cLife.innerText = com.life;
   message.innerHTML = '　'; //１行確保するために空白を入れておく
 
   await wait(1000);
