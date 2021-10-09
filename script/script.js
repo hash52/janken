@@ -6,9 +6,19 @@ class Charactor{
       this.life = life;
       this.lv = lv;
       this.type = type;
+      this.setMaxLife(life);
+      this.selection = null;
   }
   static COM = 0;
   static PLAYER = 1;
+
+  setMaxLife(maxLife){
+    this.maxLife = maxLife;
+  }
+
+  getLostLife(){
+    return this.maxLife - this.life;
+  }
 }
 
 let playerScore = 0;
@@ -25,10 +35,14 @@ const PAPER = 'paper';
 const SCISSORS = 'scissors';
 
 //index.htmlから見た相対パス
-const ASSET_PATH = './assets/charactors/'
+const ASSET_PATH = './assets/'
+const CHARACTOR_ASSET_PATH = `${ASSET_PATH}charactors/`;
 
-const player = new Charactor("タケミッチ", `${ASSET_PATH}takemichi/face.jpg`, 3, 1, Charactor.PLAYER);
-const com = new Charactor("佐野万次郎", `${ASSET_PATH}maiki/face.jpg`, 3, 50, Charactor.COM);;
+const HEART = `<img src=${ASSET_PATH}heart.jpg class='col img-fluid p-0'>`;
+const HEART_EMPTY = `<img src=${ASSET_PATH}heart-empty.jpg class='col img-fluid p-0'>`;
+
+const player = new Charactor("タケミッチ", `${CHARACTOR_ASSET_PATH}takemichi/face.jpg`, 3, 1, Charactor.PLAYER);
+const com = new Charactor("佐野万次郎", `${CHARACTOR_ASSET_PATH}maiki/face.jpg`, 3, 50, Charactor.COM);;
 
 const WINNER_COLOR = 'green';
 const LOSER_COLOR = 'red';
@@ -54,25 +68,25 @@ function computerPlay() {
   return value;
 }
 
-function playRound(playerSelection, computerSelection) {
-  if (playerSelection === computerSelection) {
+function playRound(player, com) {
+  if (player.selection === com.selection) {
     return DRAW;
-  } else if ((playerSelection == ROCK) && (computerSelection == SCISSORS)) {
+  } else if ((player.selection == ROCK) && (com.selection == SCISSORS)) {
     return PLAYER_WIN;
-  } else if ((playerSelection == PAPER) && (computerSelection == ROCK)) {
+  } else if ((player.selection == PAPER) && (com.selection == ROCK)) {
     return PLAYER_WIN;
-  } else if ((playerSelection == SCISSORS) && (computerSelection == PAPER)) {
+  } else if ((player.selection == SCISSORS) && (com.selection == PAPER)) {
     return PLAYER_WIN;
-  }else if ((playerSelection == ROCK) && (computerSelection == PAPER)) {
+  }else if ((player.selection == ROCK) && (com.selection == PAPER)) {
     return COM_WIN;
-  } else if ((playerSelection == PAPER) && (computerSelection == SCISSORS)) {
+  } else if ((player.selection == PAPER) && (com.selection == SCISSORS)) {
     return COM_WIN;
-  } else if ((playerSelection == SCISSORS) && (computerSelection == ROCK)) {
+  } else if ((player.selection == SCISSORS) && (com.selection == ROCK)) {
     return COM_WIN;
   }
 }
 
-function displaySelection(charactor, selection) {
+function displaySelection(charactor) {
   let displayed;
   switch(charactor.type){
     case Charactor.PLAYER:
@@ -82,13 +96,13 @@ function displaySelection(charactor, selection) {
       displayed = compSelect;
       break;
   }
-  displayed.innerHTML = `<i class="fas fa-hand-${selection}"></i>`;
+  displayed.innerHTML = `<i class="fas fa-hand-${charactor.selection}"></i>`;
   displayed.style.color = '';
 }
 
-function displayResult(playerSelection,computerSelection,result){
-  playerSelect.innerHTML = `<i class="fas fa-hand-${playerSelection}"></i>`;
-  compSelect.innerHTML = `<i class="fas fa-hand-${computerSelection}"></i>`;
+function displaySelectionsBy(result){
+  playerSelect.innerHTML = `<i class="fas fa-hand-${player.selection}"></i>`;
+  compSelect.innerHTML = `<i class="fas fa-hand-${com.selection}"></i>`;
   if (result === PLAYER_WIN) {
     playerSelect.style.color = WINNER_COLOR;
     compSelect.style.color = LOSER_COLOR;
@@ -103,7 +117,7 @@ function displayResult(playerSelection,computerSelection,result){
   }
 }
 
-function resetDisplay(){
+function resetSelectionDisplay(){
   playerSelect.innerHTML = '';
   compSelect.innerHTML = '';
   playerSelect.style.color = '';
@@ -111,17 +125,17 @@ function resetDisplay(){
   message.innerHTML = 'じゃ〜んけ〜ん・・';
 }
 
-function scoreBoard(result) {
+function reflectLifeGuageBy(result) {
   switch(result){
     case PLAYER_WIN:
       com.life--;
+      displayLifeGauge(com);
       break;
     case COM_WIN:
       player.life--;
+      displayLifeGauge(player);
       break;
   }
-  pLife.innerText = player.life;
-  cLife.innerText = com.life;
 }
 
 function endGame() {
@@ -142,6 +156,26 @@ function reload() {
   }, 3000);
 }
 
+function displayLifeGauge(charactor){
+  let displayed;
+  switch(charactor.type){
+    case Charactor.PLAYER:
+      displayed = pLife;
+      break;
+    case Charactor.COM:
+      displayed = cLife;
+      break;
+  }
+  let lifeGauge = ``;
+  for(let i = 0; i < charactor.life; i++){
+    lifeGauge += HEART;
+  }
+  for(let i =0; i < charactor.getLostLife(); i++){
+    lifeGauge += HEART_EMPTY;
+  }
+  displayed.innerHTML = lifeGauge;
+}
+
 
 async function initBoards() {
   const start = document.getElementById('start');
@@ -153,8 +187,8 @@ async function initBoards() {
   start.style.display = 'none';
   boards.style.display = 'block';
   select.style.display = 'block';
-  pLife.innerText = player.life;
-  cLife.innerText = com.life;
+  displayLifeGauge(player);
+  displayLifeGauge(com);
   message.innerHTML = '　'; //１行確保するために空白を入れておく
 
   await wait(1000);
@@ -195,16 +229,16 @@ startGameButton.addEventListener('click', (e)=>{
 
 async function gameFlow(){
   while(!endGame()){
-    resetDisplay();
-    let playerSelection = await Promise.any([selectRock(), selectPaper(), selectScissors()]);
-    displaySelection(player, playerSelection);
-    let computerSelection = computerPlay();
-    displaySelection(com, computerSelection);
+    resetSelectionDisplay();
+    player.selection = await Promise.any([selectRock(), selectPaper(), selectScissors()]);
+    displaySelection(player);
+    com.selection = computerPlay();
+    displaySelection(com);
     message.innerHTML += 'ぽんっ！';
     await wait(1000);
-    let result = playRound(playerSelection, computerSelection);
-    displayResult(playerSelection, computerSelection, result);
-    scoreBoard(result);
+    let result = playRound(player, com);
+    displaySelectionsBy(result);
+    reflectLifeGuageBy(result);
     message.innerText = result;
     await wait(2000);
   }
