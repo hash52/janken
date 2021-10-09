@@ -12,7 +12,8 @@
 }
 
 .boards,
-.select {
+.select,
+#com-list {
   display: none;
 }
 

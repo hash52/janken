@@ -19,7 +19,17 @@
     <div class="text-center mt-3">
       <h1 id="victory-condition"></h1>
     </div>
-    <div id="message" class="text-center h5"></div>
+    <div class="row">
+      <div id="message" class="col-6 offset-3 d-flex align-items-center justify-content-center"></div>
+      <div class="col-3" id="com-list">
+        <div class="row"> 
+          <img src='assets/charactors/icon_question.png' class='col img-fluid pb-3 px-1' id='com0'/>
+          <img src='assets/charactors/icon_question.png' class='col img-fluid pb-3 px-1' id='com1'/>
+          <img src='assets/charactors/icon_question.png' class='col img-fluid pb-3 px-1' id='com2'/>
+          <div class='col'></div>
+        </div>
+      </div>
+    </div>
     <div class="text-center m-5" id="start">
       <input type="submit" id="startGame" class="btn btn-dark" value="じゃんけんスタート！">
     </div>
@@ -28,8 +38,8 @@
         <div class="col offset-1 border p-0"> 
           <div class="row">
             <div class="col-8 border-right pr-0">
-              <div id="player-life" class="row text-center w-50 m-0 ml-1 border-bottom"></div>
-              <h2 class="text-center my-3">Player</h2>  
+              <div id="player-life" class="row text-center w-100 m-0 ml-1 border-bottom life-guage"></div>
+              <h2 class="text-center my-3 text-truncate">Player</h2>  
               <img class="img-fluid" src="assets/charactors/takemichi/face.jpg">
             </div>
             <div class="col-4 d-flex align-items-center justify-content-center">
@@ -51,8 +61,8 @@
               <div id="computerSelect"></div>
             </div>
             <div class="col-8 border-left pl-0">
-              <div id="com-life" class="row text-center w-50 m-0 ml-1 border-bottom"></div>
-              <h2 class="text-center my-3" id="com-name">COM: </h2>  
+              <div id="com-life" class="row text-center w-100 m-0 ml-1 border-bottom life-guage"></div>
+              <h2 class="text-center my-3 text-truncate">COM: <span id="com-name"></span></h2>  
               <img class="img-fluid" id="com-img" src="assets/question.jpg">
             </div>
           </div>
