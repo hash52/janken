@@ -69,14 +69,15 @@ const coms = [
 let stage = 1;
 let com;
 
-
-
 const WINNER_COLOR = 'green';
 const LOSER_COLOR = 'red';
 
 const PLAYER_WIN = 'Player1の勝ち！';
 const COM_WIN = 'Computerの勝ち！';
 const DRAW = 'あいこ';
+
+const bgm = new Audio(`${ASSET_PATH}music/this_is_revenge.mp3`);
+bgm.volume = 0.1;
 
 function computerPlay() {
   let arr = [1, 2, 3];
@@ -240,7 +241,9 @@ function initBoards() {
   boards.style.display = 'block';
   select.style.display = 'block';
   comlist.style.display = 'block';
+  bgmButton.style.display = 'block';
   message.innerHTML = '　'; //１行確保するために空白を入れておく
+  bgm.play();
 }
 
 async function updateBoard(){
@@ -254,7 +257,7 @@ async function updateBoard(){
     await getBonusHearts();
   }
   bonusHertNum = 2;
-  await wait(1500);
+  await wait(2000);
   comName.innerHTML = com.name;
   comImg.src = com.face;
   displayLifeGauge(com);
@@ -282,6 +285,7 @@ const paper = document.getElementById('paper');
 const scissors = document.getElementById('scissors');
 const muteki = document.getElementById('muteki');
 const startGameButton = document.getElementById('startGame');
+const bgmButton = document.getElementById('bgm-button');
 
 function selectRock(){
   return new Promise(resolve => {
@@ -305,6 +309,15 @@ function selectMuteki(){
   })
 }
 
+bgmButton.addEventListener('click', (e)=>{
+  if (bgm.paused){
+    bgm.play();
+    bgmButton.src = `${ASSET_PATH}icon-music-stop.png`;
+  } else {
+    bgm.pause();
+    bgmButton.src = `${ASSET_PATH}icon-music.png`;
+  }
+})
 
 startGameButton.addEventListener('click', (e)=>{
   initBoards();

@@ -22,7 +22,8 @@
 
 .boards,
 .select,
-#com-list {
+#com-list,
+#bgm-button {
   display: none;
 }
 
