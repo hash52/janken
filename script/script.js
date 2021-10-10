@@ -1,10 +1,12 @@
 //外部モジュール化はサーバーを立てないと不可
 class Charactor{
-  constructor(name, imagePath, iconPath, defeatedIconPath, life, lv, type){
+  constructor(name, imagePath, life, lv, type){
       this.name = name;
-      this.face = imagePath;
-      this.icon = iconPath;
-      this.defeatedIcon = defeatedIconPath;
+      this.face = `${imagePath}face.jpg`;
+      if (type == Charactor.COM){
+        this.icon = `${imagePath}icon.png`;
+        this.defeatedIcon = `${imagePath}defeated_icon.png`;
+      }
       this.life = life;
       this.lv = lv;
       this.type = type;
@@ -25,6 +27,63 @@ class Charactor{
   getLostLifeInThisGame(){
     return this.maxLife - this.life;
   }
+
+  selectHand(){
+    let arr = [1, 2, 3];
+    let random = arr[Math.floor(Math.random() * arr.length)];
+    let value;
+    switch (random) {
+      case 1:
+        value = ROCK;
+        break;
+      case 2:
+        value = PAPER;
+        break;
+      default:
+        value = SCISSORS;
+    }
+    this.selection = ROCK;
+  }
+}
+
+class SecretBoss extends Charactor {
+  constructor(name, imagePath, life, lv, type){
+    super(name, imagePath, life, lv, type);
+    this.rock = `${imagePath}rock.jpg`;
+    this.paper = `${imagePath}paper.jpg`;
+    this.scissors = `${imagePath}scissors.jpg`;
+    this.imagePath = imagePath;
+    this.hasHandImage = true;
+    this.hand = null;
+  }
+
+  /**
+   * 1/2の確率で確実に勝つ手を出す
+   */
+  selectHand(){
+    let arr = [1, 2];
+    let random = arr[Math.floor(Math.random() * arr.length)];
+    switch (random) {
+      case 1:
+        super.selectHand();
+        break;
+      default:
+        let value;
+        switch (player.selection) {
+          case ROCK:
+            value = PAPER;
+            break;
+          case PAPER:
+            value = SCISSORS;
+            break;
+          case SCISSORS:
+            value = ROCK;
+            break;
+        }
+        this.hand = `${this.imagePath}${value}.jpg`;
+        this.selection = value;
+    }
+  }
 }
 
 let playerScore = 0;
@@ -35,6 +94,7 @@ const cLife = document.getElementById('com-life');
 const compSelect = document.getElementById('computerSelect');
 const playerSelect = document.getElementById('playerSelect');
 const message = document.getElementById('message');
+const comImg = document.getElementById('com-img');
 
 let comIcons = [
   document.getElementById('com0'),
@@ -59,12 +119,14 @@ const COL = `<div class="col p-0"></div>`;
 const MAX_LIFE_NUM = 7;
 let bonusHertNum = 2;
 
-const player = new Charactor("タケミッチ", `${CHARACTOR_ASSET_PATH}takemichi/face.jpg`, `${CHARACTOR_ASSET_PATH}maiki/icon.png`, `${CHARACTOR_ASSET_PATH}maiki/defeated_icon.png`, 3, 50, Charactor.PLAYER);
+const player = new Charactor("タケミッチ", `${CHARACTOR_ASSET_PATH}takemichi`, 3, 50, Charactor.PLAYER);
 const coms = [
-  new Charactor("ザコ１", `${CHARACTOR_ASSET_PATH}maiki/face.jpg`, `${CHARACTOR_ASSET_PATH}maiki/icon.png`, `${CHARACTOR_ASSET_PATH}maiki/defeated_icon.png`, 2, 49, Charactor.COM),
-  new Charactor("ザコ２", `${CHARACTOR_ASSET_PATH}maiki/face.jpg`, `${CHARACTOR_ASSET_PATH}maiki/icon.png`, `${CHARACTOR_ASSET_PATH}maiki/defeated_icon.png`, 3, 49, Charactor.COM),
-  new Charactor("佐野万次郎", `${CHARACTOR_ASSET_PATH}maiki/face.jpg`, `${CHARACTOR_ASSET_PATH}maiki/icon.png`, `${CHARACTOR_ASSET_PATH}maiki/defeated_icon.png`, 1, 49, Charactor.COM),
+  new Charactor("ザコ１", `${CHARACTOR_ASSET_PATH}maiki/`, 3, 49, Charactor.COM),
+  new Charactor("ザコ２", `${CHARACTOR_ASSET_PATH}maiki/`, 3, 49, Charactor.COM),
+  new Charactor("佐野万次郎", `${CHARACTOR_ASSET_PATH}maiki/`, 3, 50, Charactor.COM),
 ];
+
+const secretBoss =   new SecretBoss("サザエさん", `${CHARACTOR_ASSET_PATH}sazae/`, 3, 49, Charactor.COM);
 
 let stage = 1;
 let com;
@@ -76,25 +138,13 @@ const PLAYER_WIN = 'Player1の勝ち！';
 const COM_WIN = 'Computerの勝ち！';
 const DRAW = 'あいこ';
 
-const bgm = new Audio(`${ASSET_PATH}music/this_is_revenge.mp3`);
-bgm.volume = 0.1;
+let bgm = new Audio(`${ASSET_PATH}music/this_is_revenge.mp3`);
+const secretBossBgm = new Audio(`${ASSET_PATH}music/sazaesan.mp3`);
 
-function computerPlay() {
-  let arr = [1, 2, 3];
-  let random = arr[Math.floor(Math.random() * arr.length)];
-  let value;
-  switch (random) {
-    case 1:
-      value = ROCK;
-      break;
-    case 2:
-      value = PAPER;
-      break;
-    default:
-      value = SCISSORS;
-  }
-  return ROCK;
-}
+bgm.volume = 0.1;
+secretBossBgm.volume = 0.3;
+
+let goSecretBoss = true;
 
 function playRound(player, com) {
   if (player.selection === com.selection) {
@@ -135,6 +185,10 @@ function displaySelection(charactor) {
     displayed.innerHTML = `<i class="fas fa-hand-${charactor.selection}"></i>`;
     displayed.style.color = '';
   }
+
+  if (com.hasHandImage) {
+    comImg.src = com.hand;
+  }
 }
 
 function displaySelectionsBy(result){
@@ -165,6 +219,9 @@ function resetSelectionDisplay(){
   playerSelect.style.color = '';
   compSelect.style.color = '';
   message.innerHTML = 'じゃ〜んけ〜ん・・';
+  if (com.hasHandImage) {
+    comImg.src = com.face;
+  }
 }
 
 function reflectLifeGuageBy(result) {
@@ -248,7 +305,6 @@ function initBoards() {
 
 async function updateBoard(){
   const comName = document.getElementById('com-name');
-  const comImg = document.getElementById('com-img');
   comName.innerHTML = '？？？';
   comImg.src = `${ASSET_PATH}/question.jpg`;
   com = coms[stage - 1];
@@ -262,9 +318,39 @@ async function updateBoard(){
   comImg.src = com.face;
   displayLifeGauge(com);
   comIcons[stage - 1].src = com.icon;
-  if (stage == coms.length) {
+  if (isLastStage()) {
     muteki.remove();
   }
+}
+
+async function updateBoardForSecretBoss(){
+  const comName = document.getElementById('com-name');
+  const comImg = document.getElementById('com-img');
+  comName.innerHTML = '？？？';
+  comImg.src = `${ASSET_PATH}/question.jpg`;
+  displayLifeGauge(player);
+  if (bonusHertNum > 0) {
+    await getBonusHearts();
+  }
+  bonusHertNum = 2;
+  await wait(2000);
+  if(!bgm.paused) {
+    bgm.pause();
+    bgm = secretBossBgm;
+    bgm.play();
+  } else {
+    bgm = secretBossBgm;
+  }
+  com = secretBoss;
+  comName.innerHTML = com.name;
+  comImg.src = com.face;
+  displayLifeGauge(com);
+  comIcons[stage - 1].src = com.icon;
+  muteki.remove();
+}
+
+function isLastStage(){
+  return stage == coms.length;
 }
 
 async function getBonusHearts(){
@@ -326,12 +412,19 @@ startGameButton.addEventListener('click', (e)=>{
 
 async function gameFlow(){
   while(!endGame()){
-    await updateBoard();
+    if (isLastStage() && goSecretBoss){
+      await updateBoardForSecretBoss();
+    } else {
+      await updateBoard();
+    }
     while(!endThisGame()){
       resetSelectionDisplay();
       player.selection = await Promise.any([selectRock(), selectPaper(), selectScissors(), selectMuteki()]);
+      if (player.selection != MUTEKI) {
+        goSecretBoss = false;
+      }
       displaySelection(player);
-      com.selection = computerPlay();
+      com.selectHand();
       displaySelection(com);
       message.innerHTML += 'ぽんっ！';
       await wait(1000);
