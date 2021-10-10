@@ -29,14 +29,12 @@ class Charactor{
   }
 
   selectHand(){
-    let arr = [1, 2, 3];
-    let random = arr[Math.floor(Math.random() * arr.length)];
     let value;
-    switch (random) {
-      case 1:
+    switch (getRandomInt0to(2)) {
+      case 0:
         value = ROCK;
         break;
-      case 2:
+      case 1:
         value = PAPER;
         break;
       default:
@@ -61,10 +59,8 @@ class SecretBoss extends Charactor {
    * 1/2の確率で確実に勝つ手を出す
    */
   selectHand(){
-    let arr = [1, 2];
-    let random = arr[Math.floor(Math.random() * arr.length)];
-    switch (random) {
-      case 1:
+    switch (getRandomInt0to(1)) {
+      case 0:
         super.selectHand();
         break;
       default:
@@ -121,11 +117,20 @@ const MAX_LIFE_NUM = 7;
 let bonusHertNum = 2;
 
 const player = new Charactor("タケミッチ", `${CHARACTOR_ASSET_PATH}takemichi`, 3, 50, Charactor.PLAYER);
-const coms = [
-  new Charactor("場地圭介", `${CHARACTOR_ASSET_PATH}baji/`, 3, 49, Charactor.COM),
-  new Charactor("龍宮寺堅", `${CHARACTOR_ASSET_PATH}doraken/`, 4, 49, Charactor.COM),
-  new Charactor("佐野万次郎", `${CHARACTOR_ASSET_PATH}maiki/`, 3, 50, Charactor.COM),
+
+const comsStage1 = [
+  new Charactor("清水将貴", `${CHARACTOR_ASSET_PATH}kiyomizu/`, 3, 10, Charactor.COM)
 ];
+const comsStage2 = [
+  new Charactor("場地圭介", `${CHARACTOR_ASSET_PATH}baji/`, 4, 30, Charactor.COM),
+  new Charactor("稀咲鉄太", `${CHARACTOR_ASSET_PATH}kisaki/`, 4, 30, Charactor.COM),
+];
+const comsStage3 = [
+  new Charactor("龍宮寺堅", `${CHARACTOR_ASSET_PATH}doraken/`, 4, 50, Charactor.COM),
+  new Charactor("佐野万次郎", `${CHARACTOR_ASSET_PATH}maiki/`, 3, 50, Charactor.COM)
+];
+
+const coms = [getComRandom(comsStage1), getComRandom(comsStage2), getComRandom(comsStage3)];
 
 const secretBoss =   new SecretBoss("サザエさん", `${CHARACTOR_ASSET_PATH}sazae/`, 3, 49, Charactor.COM);
 
@@ -374,6 +379,18 @@ async function getBonusHearts(){
 
 function wait(ms) {
   return new Promise( resolve => { setTimeout( resolve, ms ) } );
+}
+
+function getRandomInt0to(num){
+  let arr = [];
+  for (let i = 0; i <= num; i++) {
+    arr.push(i);
+  }
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+function getComRandom(coms){
+  return coms[getRandomInt0to(coms.length - 1)];
 }
 
 const rock = document.getElementById('rock');
