@@ -145,14 +145,15 @@ const PLAYER_WIN = 'Player1の勝ち！';
 const COM_WIN = 'Computerの勝ち！';
 const DRAW = 'あいこ';
 
-let bgm = new Audio(`${ASSET_PATH}music/this_is_revenge.mp3`);
+let defaultBgm = new Audio(`${ASSET_PATH}music/this_is_revenge.mp3`);
 const secretBossBgm = new Audio(`${ASSET_PATH}music/sazaesan.mp3`);
 const approachingSound = new Audio(`${ASSET_PATH}music/approaching.mp3`);
 
 const THANKS_IMG = `${ASSET_PATH}thankyou.jpg`;
 
-bgm.volume = 0.1;
-secretBossBgm.volume = 0.3;
+defaultBgm.volumeConf = 0.1;
+secretBossBgm.volumeConf = 0.3;
+approachingSound.volumeConf = 0.7;
 
 let goSecretBoss = true;
 
@@ -323,6 +324,7 @@ function initBoards() {
   comlist.style.display = 'block';
   bgmButton.style.display = 'block';
   message.innerHTML = '　'; //１行確保するために空白を入れておく
+  setBgm(defaultBgm);
   bgm.play();
 }
 
@@ -348,15 +350,13 @@ async function updateBoardForSecretBoss(){
     await getBonusHearts();
   }
   await wait(2000);
-  if(!muteMode){
-    bgm.pause();
-    approachingSound.play();
-  }
+  bgm.pause();
+  setBgm(approachingSound);
+  bgm.play();
   await appearSpMessage(com.approaching, 800, approachingSound.duration * 1000, false)
-  bgm = secretBossBgm;
-  if(!muteMode) {
-    bgm.play();
-  }
+  bgm.pause();
+  setBgm(secretBossBgm)
+  bgm.play();
   await wait(500);
   displayCom(com);
   muteki.remove();
@@ -418,6 +418,17 @@ async function getBonusHearts(){
   bonusHertNum = 2;
 }
 
+function setBgm(newBgm) {
+  bgm = newBgm;
+  //ミュートモードから再度BGMを流す際に、defaultVolumeが必要になる
+  bgm.volumeConf = newBgm.volumeConf;
+  if (muteMode) {
+    bgm.volume = 0;
+  } else {
+    bgm.volume = newBgm.volumeConf;
+  }
+}
+
 function wait(ms) {
   return new Promise( resolve => { setTimeout( resolve, ms ) } );
 }
@@ -465,11 +476,11 @@ function selectMuteki(){
 
 bgmButton.addEventListener('click', (e)=>{
   if (muteMode){
-    bgm.play();
+    bgm.volume = bgm.volumeConf;
     bgmButton.src = `${ASSET_PATH}icon-music-stop.png`;
-    mute = false;
+    muteMode = false;
   } else {
-    bgm.pause();
+    bgm.volume = 0;
     bgmButton.src = `${ASSET_PATH}icon-music.png`;
     muteMode = true;
   }
