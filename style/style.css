@@ -24,8 +24,16 @@
 .select,
 #com-list,
 #bgm-button,
-#rule-button {
+#rule-button,
+#pri-rule-explanation{
   display: none;
+}
+
+#special-message {
+  opacity: 0;
+  transform: rotate( 8deg );
+  z-index: 10;
+  position: absolute;
 }
 
 html, body {

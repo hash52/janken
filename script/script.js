@@ -50,8 +50,8 @@ class SecretBoss extends Charactor {
     this.rock = `${imagePath}rock.jpg`;
     this.paper = `${imagePath}paper.jpg`;
     this.scissors = `${imagePath}scissors.jpg`;
+    this.approaching = `${imagePath}approaching.jpg`;
     this.imagePath = imagePath;
-    this.hasHandImage = true;
     this.hand = null;
   }
 
@@ -116,6 +116,8 @@ const COL = `<div class="col p-0"></div>`;
 const MAX_LIFE_NUM = 7;
 let bonusHertNum = 2;
 
+let muteMode = false;
+
 const player = new Charactor("タケミッチ", `${CHARACTOR_ASSET_PATH}takemichi`, 3, 50, Charactor.PLAYER);
 
 const comsStage1 = [
@@ -130,7 +132,8 @@ const comsStage3 = [
   new Charactor("佐野万次郎", `${CHARACTOR_ASSET_PATH}maiki/`, 3, 50, Charactor.COM)
 ];
 
-const coms = [getComRandom(comsStage1), getComRandom(comsStage2), getComRandom(comsStage3)];
+//const coms = [getComRandom(comsStage1), getComRandom(comsStage2), getComRandom(comsStage3)];
+const coms = [new Charactor("清水将貴", `${CHARACTOR_ASSET_PATH}kiyomizu/`, 1, 10, Charactor.COM),new Charactor("清水将貴", `${CHARACTOR_ASSET_PATH}kiyomizu/`, 1, 10, Charactor.COM),new Charactor("清水将貴", `${CHARACTOR_ASSET_PATH}kiyomizu/`, 1, 10, Charactor.COM)]
 
 const secretBoss =   new SecretBoss("サザエさん", `${CHARACTOR_ASSET_PATH}sazae/`, 3, 49, Charactor.COM);
 
@@ -146,6 +149,7 @@ const DRAW = 'あいこ';
 
 let bgm = new Audio(`${ASSET_PATH}music/this_is_revenge.mp3`);
 const secretBossBgm = new Audio(`${ASSET_PATH}music/sazaesan.mp3`);
+const approachingSound = new Audio(`${ASSET_PATH}music/approaching.mp3`);
 
 bgm.volume = 0.1;
 secretBossBgm.volume = 0.3;
@@ -192,7 +196,7 @@ function displaySelection(charactor) {
     displayed.style.color = '';
   }
 
-  if (com.hasHandImage) {
+  if (com.hand) {
     comImg.src = com.hand;
   }
 }
@@ -225,7 +229,7 @@ function resetSelectionDisplay(){
   playerSelect.style.color = '';
   compSelect.style.color = '';
   message.innerHTML = 'じゃ〜んけ〜ん・・';
-  if (com.hasHandImage) {
+  if (com.hand) {
     comImg.src = com.face;
   }
 }
@@ -321,12 +325,8 @@ async function updateBoard(){
   if (stage != 1 && bonusHertNum > 0) {
     await getBonusHearts();
   }
-  bonusHertNum = 2;
   await wait(2000);
-  comName.innerHTML = com.name;
-  comImg.src = com.face;
-  displayLifeGauge(com);
-  comIcons[stage - 1].src = com.icon;
+  displayCom(com);
   if (isLastStage()) {
     muteki.remove();
   }
@@ -334,25 +334,54 @@ async function updateBoard(){
 
 async function updateBoardForSecretBoss(){
   resetBord();
+  com = secretBoss;
   displayLifeGauge(player);
   if (bonusHertNum > 0) {
     await getBonusHearts();
   }
-  bonusHertNum = 2;
   await wait(2000);
-  if(!bgm.paused) {
+  if(!muteMode){
     bgm.pause();
-    bgm = secretBossBgm;
-    bgm.play();
-  } else {
-    bgm = secretBossBgm;
+    approachingSound.play();
   }
-  com = secretBoss;
+  await appearSpMessage(com.approaching, 800, approachingSound.duration * 1000)
+  bgm = secretBossBgm;
+  if(!muteMode) {
+    bgm.play();
+  }
+  await wait(500);
+  displayCom(com);
+  muteki.remove();
+}
+
+function displayCom(com) {
   comName.innerHTML = com.name;
   comImg.src = com.face;
   displayLifeGauge(com);
   comIcons[stage - 1].src = com.icon;
-  muteki.remove();
+}
+
+
+async function appearSpMessage(messageImg, animationDuration, duration){
+  const spMessage = document.getElementById('special-message');
+  spMessage.innerHTML = `<img class="img-fluid" src=${messageImg}>`;
+  spMessage.animate([
+    {opacity: 0},
+    {opacity: 1}
+  ],
+  {
+    duration: animationDuration,
+    fill: 'forwards'
+  });
+  await wait(duration);
+  spMessage.animate([
+    {opacity: 1},
+    {opacity: 0}
+  ],
+  {
+    duration: animationDuration,
+    fill: 'forwards'
+  });
 }
 
 function resetBord(){
@@ -375,6 +404,7 @@ async function getBonusHearts(){
     await wait(500);
     displayLifeGauge(player);
   }
+  bonusHertNum = 2;
 }
 
 function wait(ms) {
@@ -423,12 +453,14 @@ function selectMuteki(){
 }
 
 bgmButton.addEventListener('click', (e)=>{
-  if (bgm.paused){
+  if (muteMode){
     bgm.play();
     bgmButton.src = `${ASSET_PATH}icon-music-stop.png`;
+    mute = false;
   } else {
     bgm.pause();
     bgmButton.src = `${ASSET_PATH}icon-music.png`;
+    muteMode = true;
   }
 })
 
