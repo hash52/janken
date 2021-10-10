@@ -259,6 +259,9 @@ async function updateBoard(){
   comImg.src = com.face;
   displayLifeGauge(com);
   comIcons[stage - 1].src = com.icon;
+  if (stage == coms.length) {
+    muteki.remove();
+  }
 }
 
 async function getBonusHearts(){
