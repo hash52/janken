@@ -1,6 +1,7 @@
 .fa-hand-rock,
 .fa-hand-paper,
-.fa-hand-scissors {
+.fa-hand-scissors,
+.fa-hand-muteki {
   font-size: 4rem;
   font-weight: bolder;
   cursor: pointer;

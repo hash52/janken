@@ -49,6 +49,7 @@ let comIcons = [
 const ROCK = 'rock';
 const PAPER = 'paper';
 const SCISSORS = 'scissors';
+const MUTEKI = 'muteki';
 
 //index.htmlから見た相対パス
 const ASSET_PATH = './assets/'
@@ -100,6 +101,10 @@ function computerPlay() {
 function playRound(player, com) {
   if (player.selection === com.selection) {
     return DRAW;
+  } else if(player.selection == MUTEKI){
+    return PLAYER_WIN;
+  } else if(com.selection == MUTEKI){
+    return COM_WIN;
   } else if ((player.selection == ROCK) && (com.selection == SCISSORS)) {
     return PLAYER_WIN;
   } else if ((player.selection == PAPER) && (com.selection == ROCK)) {
@@ -125,13 +130,22 @@ function displaySelection(charactor) {
       displayed = compSelect;
       break;
   }
-  displayed.innerHTML = `<i class="fas fa-hand-${charactor.selection}"></i>`;
-  displayed.style.color = '';
+  if (charactor.selection == MUTEKI){
+    displayed.innerHTML = `<i class="fas fa-hand-muteki"><img src="assets/muteki.png"/></i><br><span style="color: #007500;">無敵</span>`;
+  } else {
+    displayed.innerHTML = `<i class="fas fa-hand-${charactor.selection}"></i>`;
+    displayed.style.color = '';
+  }
 }
 
 function displaySelectionsBy(result){
-  playerSelect.innerHTML = `<i class="fas fa-hand-${player.selection}"></i>`;
-  compSelect.innerHTML = `<i class="fas fa-hand-${com.selection}"></i>`;
+  if (player.selection != MUTEKI){
+    playerSelect.innerHTML = `<i class="fas fa-hand-${player.selection}"></i>`;
+  }
+  if (com.selection != MUTEKI) {
+    compSelect.innerHTML = `<i class="fas fa-hand-${com.selection}"></i>`;
+  }
+
   if (result === PLAYER_WIN) {
     playerSelect.style.color = WINNER_COLOR;
     compSelect.style.color = LOSER_COLOR;
@@ -252,6 +266,7 @@ function wait(ms) {
 const rock = document.getElementById('rock');
 const paper = document.getElementById('paper');
 const scissors = document.getElementById('scissors');
+const muteki = document.getElementById('muteki');
 const startGameButton = document.getElementById('startGame');
 
 function selectRock(){
@@ -270,6 +285,12 @@ function selectScissors(){
     scissors.addEventListener("click", (e)=>{resolve(e.currentTarget.id)});
   })
 }
+function selectMuteki(){
+  return new Promise(resolve => {
+    muteki.addEventListener("click", (e)=>{resolve(e.currentTarget.id)});
+  })
+}
+
 
 startGameButton.addEventListener('click', (e)=>{
   initBoards();
@@ -281,7 +302,7 @@ async function gameFlow(){
     await updateBoard();
     while(!endThisGame()){
       resetSelectionDisplay();
-      player.selection = await Promise.any([selectRock(), selectPaper(), selectScissors()]);
+      player.selection = await Promise.any([selectRock(), selectPaper(), selectScissors(), selectMuteki()]);
       displaySelection(player);
       com.selection = computerPlay();
       displaySelection(com);
