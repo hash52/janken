@@ -40,16 +40,13 @@ class Charactor{
       default:
         value = SCISSORS;
     }
-    this.selection = ROCK;
+    return this.selection = ROCK;
   }
 }
 
 class SecretBoss extends Charactor {
   constructor(name, imagePath, life, lv, type){
     super(name, imagePath, life, lv, type);
-    this.rock = `${imagePath}rock.jpg`;
-    this.paper = `${imagePath}paper.jpg`;
-    this.scissors = `${imagePath}scissors.jpg`;
     this.approaching = `${imagePath}approaching.jpg`;
     this.imagePath = imagePath;
     this.hand = null;
@@ -76,9 +73,10 @@ class SecretBoss extends Charactor {
             value = ROCK;
             break;
         }
-        this.hand = `${this.imagePath}${value}.jpg`;
         this.selection = value;
     }
+    
+    this.hand = `${this.imagePath}${this.selection}.jpg`;
   }
 }
 
@@ -150,6 +148,8 @@ const DRAW = 'あいこ';
 let bgm = new Audio(`${ASSET_PATH}music/this_is_revenge.mp3`);
 const secretBossBgm = new Audio(`${ASSET_PATH}music/sazaesan.mp3`);
 const approachingSound = new Audio(`${ASSET_PATH}music/approaching.mp3`);
+
+const THANKS_IMG = `${ASSET_PATH}thankyou.jpg`;
 
 bgm.volume = 0.1;
 secretBossBgm.volume = 0.3;
@@ -251,7 +251,7 @@ function endGame(){
   return player.life <= 0 || coms.length < stage;
 }
 
-function endThisGame() {
+function endStage() {
   return player.life <= 0 || com.life == 0;
 }
 
@@ -300,6 +300,14 @@ function displayLifeGauge(charactor){
   displayed.innerHTML = lifeGauge;
 }
 
+function initComLifeGauge() {
+  let lifeGuage = HEART_EMPTY;
+  for(let i = 0; i < MAX_LIFE_NUM - 1; i++){
+    lifeGuage += COL;
+  }
+  cLife.innerHTML = lifeGuage;
+}
+
 function initBoards() {
   const start = document.getElementById('start');
   const boards = document.getElementById('boards');
@@ -344,7 +352,7 @@ async function updateBoardForSecretBoss(){
     bgm.pause();
     approachingSound.play();
   }
-  await appearSpMessage(com.approaching, 800, approachingSound.duration * 1000)
+  await appearSpMessage(com.approaching, 800, approachingSound.duration * 1000, false)
   bgm = secretBossBgm;
   if(!muteMode) {
     bgm.play();
@@ -362,7 +370,7 @@ function displayCom(com) {
 }
 
 
-async function appearSpMessage(messageImg, animationDuration, duration){
+async function appearSpMessage(messageImg, animationDuration, duration, parmanent){
   const spMessage = document.getElementById('special-message');
   spMessage.innerHTML = `<img class="img-fluid" src=${messageImg}>`;
   spMessage.animate([
@@ -374,14 +382,16 @@ async function appearSpMessage(messageImg, animationDuration, duration){
     fill: 'forwards'
   });
   await wait(duration);
-  spMessage.animate([
-    {opacity: 1},
-    {opacity: 0}
-  ],
-  {
-    duration: animationDuration,
-    fill: 'forwards'
-  });
+  if (!parmanent) {
+    spMessage.animate([
+      {opacity: 1},
+      {opacity: 0}
+    ],
+    {
+      duration: animationDuration,
+      fill: 'forwards'
+    });
+  }
 }
 
 function resetBord(){
@@ -391,6 +401,7 @@ function resetBord(){
   compSelect.style.color = '';  comName.innerHTML = '？？？';
   comImg.src = `${ASSET_PATH}/question.jpg`;
   cLife.innerHTML = '';
+  initComLifeGauge();
 }
 
 function isLastStage(){
@@ -476,7 +487,7 @@ async function gameFlow(){
     } else {
       await updateBoard();
     }
-    while(!endThisGame()){
+    while(!endStage()){
       resetSelectionDisplay();
       player.selection = await Promise.any([selectRock(), selectPaper(), selectScissors(), selectMuteki()]);
       if (player.selection != MUTEKI) {
@@ -493,9 +504,14 @@ async function gameFlow(){
       message.innerText = result;
       await wait(2000);
     }
-    comIcons[stage - 1].src = com.defeatedIcon;
+    if (player.life > 0) {
+      comIcons[stage - 1].src = com.defeatedIcon;
+    }
     whoWon();
     stage++;
+  }
+  if (player.life > 0) {
+    await appearSpMessage(THANKS_IMG, 500, 10000, true);
   }
   reload();
 }
