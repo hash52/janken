@@ -296,7 +296,11 @@ function initBoards() {
   const boards = document.getElementById('boards');
   const select = document.getElementById('select');
   const comlist = document.getElementById('com-list');
+  const rule = document.getElementById('pri-rule-explanation');
+  const ruleButton = document.getElementById('rule-button');
   start.style.display = 'none';
+  rule.style.display = 'none';
+  ruleButton.style.display = 'block';
   boards.style.display = 'block';
   select.style.display = 'block';
   comlist.style.display = 'block';

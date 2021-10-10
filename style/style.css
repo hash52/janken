@@ -23,7 +23,8 @@
 .boards,
 .select,
 #com-list,
-#bgm-button {
+#bgm-button,
+#rule-button {
   display: none;
 }
 
