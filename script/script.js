@@ -40,7 +40,26 @@ class Charactor{
       default:
         value = SCISSORS;
     }
-    return this.selection = ROCK;
+    return this.selection = value;
+  }
+}
+
+class Boss extends Charactor {
+  constructor(name, imagePath, life, lv, type){
+    super(name, imagePath, life, lv, type);
+  }
+
+  /**
+   * 1/2の確率で確実にあいこを出す
+   */
+   selectHand(){
+    switch (getRandomInt0to(1)) {
+      case 0:
+        super.selectHand();
+        break;
+      default:
+        this.selection = value;
+    }
   }
 }
 
@@ -130,8 +149,9 @@ const comsStage3 = [
   new Charactor("佐野万次郎", `${CHARACTOR_ASSET_PATH}maiki/`, 3, 50, Charactor.COM)
 ];
 
-//const coms = [getComRandom(comsStage1), getComRandom(comsStage2), getComRandom(comsStage3)];
-const coms = [new Charactor("清水将貴", `${CHARACTOR_ASSET_PATH}kiyomizu/`, 1, 10, Charactor.COM),new Charactor("清水将貴", `${CHARACTOR_ASSET_PATH}kiyomizu/`, 1, 10, Charactor.COM),new Charactor("清水将貴", `${CHARACTOR_ASSET_PATH}kiyomizu/`, 1, 10, Charactor.COM)]
+const coms = [getComRandom(comsStage1), getComRandom(comsStage2), getComRandom(comsStage3)];
+// DEBUG対戦用
+// const coms = [new Charactor("清水将貴", `${CHARACTOR_ASSET_PATH}kiyomizu/`, 1, 10, Charactor.COM),new Charactor("清水将貴", `${CHARACTOR_ASSET_PATH}kiyomizu/`, 1, 10, Charactor.COM),new Charactor("清水将貴", `${CHARACTOR_ASSET_PATH}kiyomizu/`, 1, 10, Charactor.COM)]
 
 const secretBoss =   new SecretBoss("サザエさん", `${CHARACTOR_ASSET_PATH}sazae/`, 3, 49, Charactor.COM);
 
