@@ -95,6 +95,7 @@ const compSelect = document.getElementById('computerSelect');
 const playerSelect = document.getElementById('playerSelect');
 const message = document.getElementById('message');
 const comImg = document.getElementById('com-img');
+const comName = document.getElementById('com-name');
 
 let comIcons = [
   document.getElementById('com0'),
@@ -121,8 +122,8 @@ let bonusHertNum = 2;
 
 const player = new Charactor("タケミッチ", `${CHARACTOR_ASSET_PATH}takemichi`, 3, 50, Charactor.PLAYER);
 const coms = [
-  new Charactor("ザコ１", `${CHARACTOR_ASSET_PATH}maiki/`, 3, 49, Charactor.COM),
-  new Charactor("ザコ２", `${CHARACTOR_ASSET_PATH}maiki/`, 3, 49, Charactor.COM),
+  new Charactor("場地圭介", `${CHARACTOR_ASSET_PATH}baji/`, 3, 49, Charactor.COM),
+  new Charactor("龍宮寺堅", `${CHARACTOR_ASSET_PATH}doraken/`, 4, 49, Charactor.COM),
   new Charactor("佐野万次郎", `${CHARACTOR_ASSET_PATH}maiki/`, 3, 50, Charactor.COM),
 ];
 
@@ -304,9 +305,7 @@ function initBoards() {
 }
 
 async function updateBoard(){
-  const comName = document.getElementById('com-name');
-  comName.innerHTML = '？？？';
-  comImg.src = `${ASSET_PATH}/question.jpg`;
+  resetBord();
   com = coms[stage - 1];
   displayLifeGauge(player);
   if (stage != 1 && bonusHertNum > 0) {
@@ -324,10 +323,7 @@ async function updateBoard(){
 }
 
 async function updateBoardForSecretBoss(){
-  const comName = document.getElementById('com-name');
-  const comImg = document.getElementById('com-img');
-  comName.innerHTML = '？？？';
-  comImg.src = `${ASSET_PATH}/question.jpg`;
+  resetBord();
   displayLifeGauge(player);
   if (bonusHertNum > 0) {
     await getBonusHearts();
@@ -347,6 +343,15 @@ async function updateBoardForSecretBoss(){
   displayLifeGauge(com);
   comIcons[stage - 1].src = com.icon;
   muteki.remove();
+}
+
+function resetBord(){
+  playerSelect.innerHTML = '';
+  compSelect.innerHTML = '';
+  playerSelect.style.color = '';
+  compSelect.style.color = '';  comName.innerHTML = '？？？';
+  comImg.src = `${ASSET_PATH}/question.jpg`;
+  cLife.innerHTML = '';
 }
 
 function isLastStage(){
