@@ -8,15 +8,11 @@ class Charactor{
       this.life = life;
       this.lv = lv;
       this.type = type;
-      this.setMaxLife(life);
+      this.maxLife = life;
       this.selection = null;
   }
   static COM = 0;
   static PLAYER = 1;
-
-  setMaxLife(maxLife){
-    this.maxLife = maxLife;
-  }
 
   lostLife(){
     if(this.lv < 50){
@@ -61,11 +57,12 @@ const HEART_HALF = `<img src=${ASSET_PATH}heart-half.jpg class='col img-fluid p-
 const COL = `<div class="col p-0"></div>`;
 
 const MAX_LIFE_NUM = 7;
+let bonusHertNum = 2;
 
-const player = new Charactor("タケミッチ", `${CHARACTOR_ASSET_PATH}takemichi/face.jpg`, `${CHARACTOR_ASSET_PATH}maiki/icon.png`, `${CHARACTOR_ASSET_PATH}maiki/defeated_icon.png`, 5, 50, Charactor.PLAYER);
+const player = new Charactor("タケミッチ", `${CHARACTOR_ASSET_PATH}takemichi/face.jpg`, `${CHARACTOR_ASSET_PATH}maiki/icon.png`, `${CHARACTOR_ASSET_PATH}maiki/defeated_icon.png`, 3, 50, Charactor.PLAYER);
 const coms = [
-  new Charactor("ザコ１", `${CHARACTOR_ASSET_PATH}maiki/face.jpg`, `${CHARACTOR_ASSET_PATH}maiki/icon.png`, `${CHARACTOR_ASSET_PATH}maiki/defeated_icon.png`, 1, 49, Charactor.COM),
-  new Charactor("ザコ２", `${CHARACTOR_ASSET_PATH}maiki/face.jpg`, `${CHARACTOR_ASSET_PATH}maiki/icon.png`, `${CHARACTOR_ASSET_PATH}maiki/defeated_icon.png`, 1, 49, Charactor.COM),
+  new Charactor("ザコ１", `${CHARACTOR_ASSET_PATH}maiki/face.jpg`, `${CHARACTOR_ASSET_PATH}maiki/icon.png`, `${CHARACTOR_ASSET_PATH}maiki/defeated_icon.png`, 2, 49, Charactor.COM),
+  new Charactor("ザコ２", `${CHARACTOR_ASSET_PATH}maiki/face.jpg`, `${CHARACTOR_ASSET_PATH}maiki/icon.png`, `${CHARACTOR_ASSET_PATH}maiki/defeated_icon.png`, 3, 49, Charactor.COM),
   new Charactor("佐野万次郎", `${CHARACTOR_ASSET_PATH}maiki/face.jpg`, `${CHARACTOR_ASSET_PATH}maiki/icon.png`, `${CHARACTOR_ASSET_PATH}maiki/defeated_icon.png`, 1, 49, Charactor.COM),
 ];
 
@@ -95,13 +92,14 @@ function computerPlay() {
     default:
       value = SCISSORS;
   }
-  return value;
+  return ROCK;
 }
 
 function playRound(player, com) {
   if (player.selection === com.selection) {
     return DRAW;
   } else if(player.selection == MUTEKI){
+    bonusHertNum--;
     return PLAYER_WIN;
   } else if(com.selection == MUTEKI){
     return COM_WIN;
@@ -252,11 +250,24 @@ async function updateBoard(){
   comImg.src = `${ASSET_PATH}/question.jpg`;
   com = coms[stage - 1];
   displayLifeGauge(player);
-  displayLifeGauge(com);
+  if (stage != 1 && bonusHertNum > 0) {
+    await getBonusHearts();
+  }
+  bonusHertNum = 2;
   await wait(1500);
   comName.innerHTML = com.name;
   comImg.src = com.face;
+  displayLifeGauge(com);
   comIcons[stage - 1].src = com.icon;
+}
+
+async function getBonusHearts(){
+  for(let i = 0; i < bonusHertNum; i++){
+    player.life++;
+    player.maxLife = player.life;
+    await wait(500);
+    displayLifeGauge(player);
+  }
 }
 
 function wait(ms) {
