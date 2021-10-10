@@ -61,14 +61,14 @@ const COL = `<div class="col p-0"></div>`;
 
 const MAX_LIFE_NUM = 7;
 
-const player = new Charactor("タケミッチ", `${CHARACTOR_ASSET_PATH}takemichi/face.jpg`, `${CHARACTOR_ASSET_PATH}maiki/icon.png`, `${CHARACTOR_ASSET_PATH}maiki/defeated_icon.png`, 3, 1, Charactor.PLAYER);
+const player = new Charactor("タケミッチ", `${CHARACTOR_ASSET_PATH}takemichi/face.jpg`, `${CHARACTOR_ASSET_PATH}maiki/icon.png`, `${CHARACTOR_ASSET_PATH}maiki/defeated_icon.png`, 5, 50, Charactor.PLAYER);
 const coms = [
   new Charactor("ザコ１", `${CHARACTOR_ASSET_PATH}maiki/face.jpg`, `${CHARACTOR_ASSET_PATH}maiki/icon.png`, `${CHARACTOR_ASSET_PATH}maiki/defeated_icon.png`, 1, 49, Charactor.COM),
   new Charactor("ザコ２", `${CHARACTOR_ASSET_PATH}maiki/face.jpg`, `${CHARACTOR_ASSET_PATH}maiki/icon.png`, `${CHARACTOR_ASSET_PATH}maiki/defeated_icon.png`, 1, 49, Charactor.COM),
   new Charactor("佐野万次郎", `${CHARACTOR_ASSET_PATH}maiki/face.jpg`, `${CHARACTOR_ASSET_PATH}maiki/icon.png`, `${CHARACTOR_ASSET_PATH}maiki/defeated_icon.png`, 1, 49, Charactor.COM),
 ];
 
-let stage = 0;
+let stage = 1;
 let com;
 
 
@@ -236,13 +236,13 @@ async function updateBoard(){
   const comImg = document.getElementById('com-img');
   comName.innerHTML = '？？？';
   comImg.src = `${ASSET_PATH}/question.jpg`;
-  com = coms[stage];
+  com = coms[stage - 1];
   displayLifeGauge(player);
   displayLifeGauge(com);
   await wait(1500);
   comName.innerHTML = com.name;
   comImg.src = com.face;
-  comIcons[stage].src = com.icon;
+  comIcons[stage - 1].src = com.icon;
 }
 
 function wait(ms) {
@@ -293,7 +293,7 @@ async function gameFlow(){
       message.innerText = result;
       await wait(2000);
     }
-    comIcons[stage].src = com.defeatedIcon;
+    comIcons[stage - 1].src = com.defeatedIcon;
     whoWon();
     stage++;
   }
