@@ -280,7 +280,8 @@ function displayLifeGauge(charactor){
     lifeGauge += HEART_HALF;
     lifeGaugeLength++;
   }
-  for(let i = 1; i <= charactor.getLostLifeInThisGame(); i++){
+  let emptyHertNum = Number.isInteger(charactor.maxLife) ? Math.floor(charactor.getLostLifeInThisGame()) : Math.ceil(charactor.getLostLifeInThisGame());
+  for(let i = 1; i <= emptyHertNum; i++){
     lifeGauge += HEART_EMPTY;
     lifeGaugeLength++;
   }
