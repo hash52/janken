@@ -366,15 +366,15 @@ let muteMode = false;
 const player = new Player(takemiData, `${CHARACTOR_ASSET_PATH}takemichi/`, 3);
 
 const comsStage1 = [
-  new Computer(kiyomizuData, `${CHARACTOR_ASSET_PATH}kiyomizu/`, 2)
+  new Computer(kiyomizuData, `${CHARACTOR_ASSET_PATH}kiyomizu/`, 3)
 ];
 const comsStage2 = [
-  new Computer(bajiData, `${CHARACTOR_ASSET_PATH}baji/`, 3),
-  new Computer(kisakiData, `${CHARACTOR_ASSET_PATH}kisaki/`, 3),
+  new Computer(bajiData, `${CHARACTOR_ASSET_PATH}baji/`, 4),
+  new Computer(kisakiData, `${CHARACTOR_ASSET_PATH}kisaki/`, 4),
 ];
 const comsStage3 = [
-  new Boss(dorakenData, `${CHARACTOR_ASSET_PATH}doraken/`, 3),
-  new Boss(maikiData, `${CHARACTOR_ASSET_PATH}maiki/`, 3)
+  new Boss(dorakenData, `${CHARACTOR_ASSET_PATH}doraken/`, 5),
+  new Boss(maikiData, `${CHARACTOR_ASSET_PATH}maiki/`, 5)
 ];
 
 const secretBoss =   new SecretBoss(sazaeData, `${CHARACTOR_ASSET_PATH}sazae/`, 3);
@@ -837,11 +837,16 @@ async function gameFlow(){
     while(!endStage()){
       resetSelectionDisplay();
       if (!hasAwakenInStage && player.canAwaken()) {
-        // 覚醒の発動確率＝2/5
-        switch (getRandomInt0to(DEBUG ? 0 : 4)) {
-          case 0:
-          case 1:
-            awakenOn();
+        //すぐ負けてつまらんとならないように、初回でピンチなら発動させる
+        if (stage == 1) {
+          awakenOn();
+        } else {
+          // 覚醒の発動確率＝2/5
+          switch (getRandomInt0to(DEBUG ? 0 : 4)) {
+            case 0:
+            case 1:
+              awakenOn();
+          }
         }
       }
       
@@ -859,9 +864,9 @@ async function gameFlow(){
       let result = playRound(player, com);
       displaySelectionsBy(result);
       message.innerText = result;
-      //スーバー覚醒なら相手に２〜４倍のダメージ
+      //スーバー覚醒なら相手に2〜5倍のダメージ
       if (player.isSuperAwakening && result == PLAYER_WIN) {
-        for (let i = 0; i < 2 + getRandomInt0to(2); i++) {
+        for (let i = 0; i < 2 + getRandomInt0to(3); i++) {
           if (i != 0) {
             await wait(500);
           }
