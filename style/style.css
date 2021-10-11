@@ -24,8 +24,7 @@
 .select,
 #com-list,
 #bgm-button,
-#rule-button,
-#pri-rule-explanation{
+#rule-button {
   display: none;
 }
 
