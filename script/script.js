@@ -1,20 +1,13 @@
 //外部モジュール化はサーバーを立てないと不可
 class Charactor{
-  constructor(name, imagePath, life, lv, type){
+  constructor(name, imagePath, life, lv){
       this.name = name;
       this.face = `${imagePath}face.jpg`;
-      if (type == Charactor.COM){
-        this.icon = `${imagePath}icon.png`;
-        this.defeatedIcon = `${imagePath}defeated_icon.png`;
-      }
       this.life = life;
       this.lv = lv;
-      this.type = type;
       this.maxLife = life;
       this.selection = null;
   }
-  static COM = 0;
-  static PLAYER = 1;
 
   lostLife(){
     if(this.lv < 50){
@@ -26,6 +19,20 @@ class Charactor{
 
   getLostLifeInThisGame(){
     return this.maxLife - this.life;
+  }
+}
+
+class Player extends Charactor {
+  constructor(name, imagePath, life, lv,){
+    super(name, imagePath, life, lv);
+  }
+}
+
+class Computer extends Charactor {
+  constructor(name, imagePath, life, lv){
+    super(name, imagePath, life, lv);
+    this.icon = `${imagePath}icon.png`;
+    this.defeatedIcon = `${imagePath}defeated_icon.png`;
   }
 
   selectHand(){
@@ -44,9 +51,9 @@ class Charactor{
   }
 }
 
-class Boss extends Charactor {
-  constructor(name, imagePath, life, lv, type){
-    super(name, imagePath, life, lv, type);
+class Boss extends Computer {
+  constructor(name, imagePath, life, lv){
+    super(name, imagePath, life, lv);
   }
 
   /**
@@ -63,9 +70,9 @@ class Boss extends Charactor {
   }
 }
 
-class SecretBoss extends Charactor {
-  constructor(name, imagePath, life, lv, type){
-    super(name, imagePath, life, lv, type);
+class SecretBoss extends Computer {
+  constructor(name, imagePath, life, lv){
+    super(name, imagePath, life, lv);
     this.approaching = `${imagePath}approaching.jpg`;
     this.imagePath = imagePath;
     this.hand = null;
@@ -135,25 +142,25 @@ let bonusHertNum = 2;
 
 let muteMode = false;
 
-const player = new Charactor("タケミッチ", `${CHARACTOR_ASSET_PATH}takemichi`, 3, 3, Charactor.PLAYER);
+const player = new Player("タケミッチ", `${CHARACTOR_ASSET_PATH}takemichi`, 3, 3);
 
 const comsStage1 = [
-  new Charactor("清水将貴", `${CHARACTOR_ASSET_PATH}kiyomizu/`, 3, 10, Charactor.COM)
+  new Computer("清水将貴", `${CHARACTOR_ASSET_PATH}kiyomizu/`, 3, 10)
 ];
 const comsStage2 = [
-  new Charactor("場地圭介", `${CHARACTOR_ASSET_PATH}baji/`, 4, 30, Charactor.COM),
-  new Charactor("稀咲鉄太", `${CHARACTOR_ASSET_PATH}kisaki/`, 4, 30, Charactor.COM),
+  new Computer("場地圭介", `${CHARACTOR_ASSET_PATH}baji/`, 4, 30),
+  new Computer("稀咲鉄太", `${CHARACTOR_ASSET_PATH}kisaki/`, 4, 30),
 ];
 const comsStage3 = [
-  new Charactor("龍宮寺堅", `${CHARACTOR_ASSET_PATH}doraken/`, 4, 50, Charactor.COM),
-  new Charactor("佐野万次郎", `${CHARACTOR_ASSET_PATH}maiki/`, 3, 50, Charactor.COM)
+  new Boss("龍宮寺堅", `${CHARACTOR_ASSET_PATH}doraken/`, 4, 50),
+  new Boss("佐野万次郎", `${CHARACTOR_ASSET_PATH}maiki/`, 3, 50)
 ];
+
+const secretBoss =   new SecretBoss("サザエさん", `${CHARACTOR_ASSET_PATH}sazae/`, 3, 49);
 
 const coms = [getComRandom(comsStage1), getComRandom(comsStage2), getComRandom(comsStage3)];
 // DEBUG対戦用
-// const coms = [new Charactor("清水将貴", `${CHARACTOR_ASSET_PATH}kiyomizu/`, 1, 10, Charactor.COM),new Charactor("清水将貴", `${CHARACTOR_ASSET_PATH}kiyomizu/`, 1, 10, Charactor.COM),new Charactor("清水将貴", `${CHARACTOR_ASSET_PATH}kiyomizu/`, 1, 10, Charactor.COM)]
-
-const secretBoss =   new SecretBoss("サザエさん", `${CHARACTOR_ASSET_PATH}sazae/`, 3, 49, Charactor.COM);
+// const coms = [new Charactor("清水将貴", `${CHARACTOR_ASSET_PATH}kiyomizu/`, 1, 10),new Charactor("清水将貴", `${CHARACTOR_ASSET_PATH}kiyomizu/`, 1, 10),new Charactor("清水将貴", `${CHARACTOR_ASSET_PATH}kiyomizu/`, 1, 10)]
 
 let stage = 1;
 let com;
@@ -202,13 +209,10 @@ function playRound(player, com) {
 
 function displaySelection(charactor) {
   let displayed;
-  switch(charactor.type){
-    case Charactor.PLAYER:
-      displayed = playerSelect;
-      break;
-    case Charactor.COM:
-      displayed = compSelect;
-      break;
+  if (charactor instanceof Player) {
+    displayed = playerSelect;
+  } else {
+    displayed = compSelect;
   }
   if (charactor.selection == MUTEKI){
     displayed.innerHTML = `<i class="fas fa-hand-muteki"><img src="assets/muteki.png"/></i><br><span style="color: #007500;">無敵</span>`;
@@ -292,13 +296,10 @@ function reload() {
 
 function displayLifeGauge(charactor){
   let displayed;
-  switch(charactor.type){
-    case Charactor.PLAYER:
-      displayed = pLife;
-      break;
-    case Charactor.COM:
-      displayed = cLife;
-      break;
+  if (charactor instanceof Player) {
+    displayed = pLife;
+  } else {
+    displayed = cLife;
   }
   let lifeGauge = ``;
   let lifeGaugeLength = 0;
