@@ -27,6 +27,7 @@ class Charactor{
 class Player extends Charactor {
   constructor(name, imagePath, life, lv,){
     super(name, imagePath, life, lv);
+    this.defeatedFace = `${imagePath}defeated_face.jpg`;
   }
 }
 
@@ -116,7 +117,8 @@ const cLife = document.getElementById('com-life');
 const compSelect = document.getElementById('computerSelect');
 const playerSelect = document.getElementById('playerSelect');
 const message = document.getElementById('message');
-const comImg = document.getElementById('com-img');
+const playerFace = document.getElementById('player-face');
+const comFace = document.getElementById('com-face');
 const comName = document.getElementById('com-name');
 
 let comIcons = [
@@ -227,7 +229,8 @@ function displaySelection(charactor) {
   }
 
   if (com.hand) {
-    comImg.src = com.hand;
+    const playerFace = document.getElementById('player-face');
+    comFace.src = com.hand;
   }
 }
 
@@ -260,7 +263,8 @@ function resetSelectionDisplay(){
   compSelect.style.color = '';
   message.innerHTML = 'じゃ〜んけ〜ん・・';
   if (com.hand) {
-    comImg.src = com.face;
+    const playerFace = document.getElementById('player-face');
+    comFace.src = com.face;
   }
 }
 
@@ -392,8 +396,9 @@ async function updateBoardForSecretBoss(){
 }
 
 function displayCom(com) {
-  comName.innerHTML = com.name;
-  comImg.src = com.face;
+  comName.innerHTML = com
+  const playerFace = document.getElementById('player-face').name;;
+  comFace.src = com.face;
   displayLifeGauge(com);
   comIcons[stage - 1].src = com.icon;
 }
@@ -427,8 +432,10 @@ function resetBord(){
   playerSelect.innerHTML = '';
   compSelect.innerHTML = '';
   playerSelect.style.color = '';
-  compSelect.style.color = '';  comName.innerHTML = '？？？';
-  comImg.src = `${ASSET_PATH}/question.jpg`;
+  compSelect.style.color = '';
+  comName.innerHTML = '？？？';
+  const playerFace = document.getElementById('player-face');
+  comFace.src = `${ASSET_PATH}/question.jpg`;
   cLife.innerHTML = '';
   initComLifeGauge();
 }
@@ -546,6 +553,9 @@ async function gameFlow(){
     }
     if (player.life > 0) {
       comIcons[stage - 1].src = com.defeatedIcon;
+    } else {
+      playerFace.src = player.defeatedFace;
+      await wait(1000);
     }
     whoWon();
     stage++;
