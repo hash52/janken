@@ -2,21 +2,24 @@ const DEBUG = true;
 
 //外部モジュール化はサーバーを立てないと不可
 class Charactor{
-  constructor(name, imagePath, life, lv){
+  constructor(name, imagePath, life){
       this.name = name;
       this.face = `${imagePath}face.jpg`;
       this.life = life;
-      this.lv = lv;
       this.maxLife = life;
       this.selection = null;
+      this.loseLife = 1;
   }
 
   lostLife(){
-    if(this.lv < 50){
-      this.life--;
-    }else{
-      this.life -= 0.5;
+    this.life -= this.loseLife;
+    if(this.life < 0){
+      this.life = 0;
     }
+  }
+
+  attack(subject){
+    subject.lostLife();
   }
 
   getLostLifeInThisGame(){
@@ -25,15 +28,31 @@ class Charactor{
 }
 
 class Player extends Charactor {
-  constructor(name, imagePath, life, lv,){
-    super(name, imagePath, life, lv);
+  constructor(name, imagePath, life){
+    super(name, imagePath, life);
     this.defeatedFace = `${imagePath}defeated_face.jpg`;
+    this.awakeningFace = `${imagePath}awakening_face.jpg`;
+    this.isAwakening = false;
+  }
+
+  awaken(){
+    this.isAwakening = true;
+    this.loseLife = 0.5;
+  }
+
+  cancelAwaken(){
+    this.isAwakening = false;
+    this.loseLife = 1;
+  }
+
+  canAwaken(){
+    return this.life < 1.5 && !this.isAwakening;
   }
 }
 
 class Computer extends Charactor {
-  constructor(name, imagePath, life, lv){
-    super(name, imagePath, life, lv);
+  constructor(name, imagePath, life){
+    super(name, imagePath, life);
     this.icon = `${imagePath}icon.png`;
     this.defeatedIcon = `${imagePath}defeated_icon.png`;
   }
@@ -55,8 +74,9 @@ class Computer extends Charactor {
 }
 
 class Boss extends Computer {
-  constructor(name, imagePath, life, lv){
-    super(name, imagePath, life, lv);
+  constructor(name, imagePath, life){
+    super(name, imagePath, life);
+    this.loseLife = 0.5
   }
 
   /**
@@ -68,14 +88,14 @@ class Boss extends Computer {
         super.selectHand();
         break;
       default:
-        this.selection = value;
+        this.selection = player.selection;
     }
   }
 }
 
 class SecretBoss extends Computer {
-  constructor(name, imagePath, life, lv){
-    super(name, imagePath, life, lv);
+  constructor(name, imagePath, life){
+    super(name, imagePath, life);
     this.approaching = `${imagePath}approaching.jpg`;
     this.imagePath = imagePath;
     this.hand = null;
@@ -112,6 +132,8 @@ class SecretBoss extends Computer {
 let playerScore = 0;
 let computerScore = 0;
 
+hasAwakenInStage = false;
+
 const pLife = document.getElementById('player-life');
 const cLife = document.getElementById('com-life');
 const compSelect = document.getElementById('computerSelect');
@@ -146,25 +168,29 @@ let bonusHertNum = 2;
 
 let muteMode = false;
 
-const player = new Player("タケミッチ", `${CHARACTOR_ASSET_PATH}takemichi/`, 3, 3);
+const player = new Player("タケミッチ", `${CHARACTOR_ASSET_PATH}takemichi/`, 3);
 
 const comsStage1 = [
-  new Computer("清水将貴", `${CHARACTOR_ASSET_PATH}kiyomizu/`, 3, 10)
+  new Computer("清水将貴", `${CHARACTOR_ASSET_PATH}kiyomizu/`, 3)
 ];
 const comsStage2 = [
-  new Computer("場地圭介", `${CHARACTOR_ASSET_PATH}baji/`, 4, 30),
-  new Computer("稀咲鉄太", `${CHARACTOR_ASSET_PATH}kisaki/`, 4, 30),
+  new Computer("場地圭介", `${CHARACTOR_ASSET_PATH}baji/`, 4),
+  new Computer("稀咲鉄太", `${CHARACTOR_ASSET_PATH}kisaki/`, 4),
 ];
 const comsStage3 = [
-  new Boss("龍宮寺堅", `${CHARACTOR_ASSET_PATH}doraken/`, 4, 50),
-  new Boss("佐野万次郎", `${CHARACTOR_ASSET_PATH}maiki/`, 3, 50)
+  new Boss("龍宮寺堅", `${CHARACTOR_ASSET_PATH}doraken/`, 4),
+  new Boss("佐野万次郎", `${CHARACTOR_ASSET_PATH}maiki/`, 3)
 ];
 
-const secretBoss =   new SecretBoss("サザエさん", `${CHARACTOR_ASSET_PATH}sazae/`, 3, 49);
+const secretBoss =   new SecretBoss("サザエさん", `${CHARACTOR_ASSET_PATH}sazae/`, 3);
 
 let coms;
 if (DEBUG) {
-  coms = [new Computer("清水将貴", `${CHARACTOR_ASSET_PATH}kiyomizu/`, 1, 10),new Computer("清水将貴", `${CHARACTOR_ASSET_PATH}kiyomizu/`, 1, 10),new Computer("清水将貴", `${CHARACTOR_ASSET_PATH}kiyomizu/`, 1, 10)];
+  coms = [
+    new Computer("清水将貴", `${CHARACTOR_ASSET_PATH}kiyomizu/`, 1),
+    new Computer("清水将貴", `${CHARACTOR_ASSET_PATH}kiyomizu/`, 3),
+    new Boss("清水将貴", `${CHARACTOR_ASSET_PATH}kiyomizu/`, 3)
+  ];
 } else {
   coms = [getComRandom(comsStage1), getComRandom(comsStage2), getComRandom(comsStage3)];  
 }
@@ -179,15 +205,20 @@ const PLAYER_WIN = 'Player1の勝ち！';
 const COM_WIN = 'Computerの勝ち！';
 const DRAW = 'あいこ';
 
-let defaultBgm = new Audio(`${ASSET_PATH}music/this_is_revenge.mp3`);
-const secretBossBgm = new Audio(`${ASSET_PATH}music/sazaesan.mp3`);
-const approachingSound = new Audio(`${ASSET_PATH}music/approaching.mp3`);
+const MUSIC_PATH = `${ASSET_PATH}music/`
+
+let defaultBgm = new Audio(`${MUSIC_PATH}/this_is_revenge.mp3`);
+const secretBossBgm = new Audio(`${MUSIC_PATH}/sazaesan.mp3`);
+const approachingSound = new Audio(`${MUSIC_PATH}/approaching.mp3`);
+const awakenSound = new Audio(`${MUSIC_PATH}/awaken.mp3`);
 
 const THANKS_IMG = `${ASSET_PATH}thankyou.jpg`;
 
 defaultBgm.volumeConf = 0.1;
 secretBossBgm.volumeConf = 0.3;
 approachingSound.volumeConf = 0.7;
+//FIXME 覚醒音はBGMに重ねるので、volumeConfを使って音量を制御できない
+awakenSound.volume = 0.5;
 
 let goSecretBoss = true;
 
@@ -229,7 +260,6 @@ function displaySelection(charactor) {
   }
 
   if (com.hand) {
-    const playerFace = document.getElementById('player-face');
     comFace.src = com.hand;
   }
 }
@@ -263,19 +293,18 @@ function resetSelectionDisplay(){
   compSelect.style.color = '';
   message.innerHTML = 'じゃ〜んけ〜ん・・';
   if (com.hand) {
-    const playerFace = document.getElementById('player-face');
     comFace.src = com.face;
   }
 }
 
-function reflectLifeGuageBy(result) {
+function reduceLifeGuageBy(result) {
   switch(result){
     case PLAYER_WIN:
-      com.lostLife();
+      player.attack(com);
       displayLifeGauge(com);
       break;
     case COM_WIN:
-      player.lostLife();
+      com.attack(player);
       displayLifeGauge(player);
       break;
   }
@@ -286,7 +315,7 @@ function endGame(){
 }
 
 function endStage() {
-  return player.life <= 0 || com.life == 0;
+  return player.life <= 0 || com.life <= 0;
 }
 
 function whoWon() {
@@ -337,6 +366,20 @@ function initComLifeGauge() {
     lifeGuage += COL;
   }
   cLife.innerHTML = lifeGuage;
+}
+
+function awakenOn(){
+  if(!muteMode){
+    awakenSound.play();
+  }
+  player.awaken();
+  playerFace.src = player.awakeningFace;
+  hasAwakenInStage = true;
+}
+
+function awakenOff(){
+  player.cancelAwaken();
+  playerFace.src = player.face;
 }
 
 function initBoards() {
@@ -396,8 +439,7 @@ async function updateBoardForSecretBoss(){
 }
 
 function displayCom(com) {
-  comName.innerHTML = com
-  const playerFace = document.getElementById('player-face').name;;
+  comName.innerHTML = com.name;
   comFace.src = com.face;
   displayLifeGauge(com);
   comIcons[stage - 1].src = com.icon;
@@ -434,10 +476,12 @@ function resetBord(){
   playerSelect.style.color = '';
   compSelect.style.color = '';
   comName.innerHTML = '？？？';
-  const playerFace = document.getElementById('player-face');
   comFace.src = `${ASSET_PATH}/question.jpg`;
   cLife.innerHTML = '';
   initComLifeGauge();
+  if (player.isAwakening) {
+    awakenOff();
+  }
 }
 
 function isLastStage(){
@@ -535,9 +579,20 @@ async function gameFlow(){
       await updateBoard();
     }
     while(!endStage()){
+      let hasAwakenInStage = false;
       resetSelectionDisplay();
+
+      if (stage >= 2 && !hasAwakenInStage && player.canAwaken()) {
+        switch (getRandomInt0to(0)) {
+          case 0:
+            awakenOn();
+        }
+      }
+      
       player.selection = await Promise.any([selectRock(), selectPaper(), selectScissors(), selectMuteki()]);
-      if (player.selection != MUTEKI) {
+      if (player.selection == MUTEKI) {
+        awakenOff();
+      } else {
         goSecretBoss = false;
       }
       displaySelection(player);
@@ -547,8 +602,15 @@ async function gameFlow(){
       await wait(1000);
       let result = playRound(player, com);
       displaySelectionsBy(result);
-      reflectLifeGuageBy(result);
       message.innerText = result;
+      //覚醒状態なら相手に倍ダメージ
+      if (player.isAwakening && result == PLAYER_WIN) {
+        reduceLifeGuageBy(result);
+        await wait(500);
+        reduceLifeGuageBy(result);
+      } else {
+        reduceLifeGuageBy(result);
+      }
       await wait(2000);
     }
     if (player.life > 0) {
