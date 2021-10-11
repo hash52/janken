@@ -884,7 +884,7 @@ async function gameFlow(){
           break;
       }
       await wait(2000);
-      if(stage == coms.length && player.life <= 0 && !player.isSuperAwakening) {
+      if(stage == coms.length && player.life <= 0 && !player.isSuperAwakening && !(com instanceof SecretBoss)) {
         await player.superAwaken();
       } 
     }
