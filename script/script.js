@@ -25,11 +25,15 @@ class Charactor{
   getLostLifeInThisGame(){
     return this.maxLife - this.life;
   }
+
+  getDialogFromKey(){
+
+  }
 }
 
 class Player extends Charactor {
-  constructor(name, imagePath, life){
-    super(name, imagePath, life);
+  constructor(data, imagePath, life){
+    super(data, imagePath, life);
     this.defeatedFace = `${imagePath}defeated_face.jpg`;
     this.awakeningFace = `${imagePath}awakening_face.jpg`;
     this.isAwakening = false;
@@ -51,9 +55,12 @@ class Player extends Charactor {
 }
 
 class Computer extends Charactor {
-  constructor(name, imagePath, life){
-    super(name, imagePath, life);
+  constructor(data, imagePath, life){
+    super(data.name, imagePath, life);
     this.icon = `${imagePath}icon.png`;
+    this.greetings = data.greeting;
+    this.winDialogs = data.win;
+    this.loseDialogs = data.lose;
     this.defeatedIcon = `${imagePath}defeated_icon.png`;
   }
 
@@ -71,62 +78,204 @@ class Computer extends Charactor {
     }
     return this.selection = DEBUG ? ROCK : value;
   }
+
+  getRandomGreeting(){
+    return this.greetings[getRandomInt0to(this.greetings.length - 1)];
+  }
+
+  getRandomWinDialog(){
+    return this.winDialogs[getRandomInt0to(this.winDialogs.length - 1)];
+  }
+
+  getRandomLoseDialog(){
+    return this.loseDialogs[getRandomInt0to(this.loseDialogs.length - 1)];
+  }
 }
 
 class Boss extends Computer {
-  constructor(name, imagePath, life){
-    super(name, imagePath, life);
+  constructor(data, imagePath, life){
+    super(data, imagePath, life);
     this.loseLife = 0.5
+    this.lastDialogs = data.last;
   }
 
   /**
-   * 1/2の確率で確実にあいこを出す
+   * 1/3の確率で確実に勝てる手を出す（勝率 2/9）
    */
    selectHand(){
-    switch (getRandomInt0to(1)) {
+    switch (getRandomInt0to(2)) {
       case 0:
-        super.selectHand();
+        this.selection = this.getWinHand();
         break;
       default:
-        this.selection = player.selection;
+        super.selectHand();
     }
+  }
+
+  getWinHand(){
+    let value;
+    switch (player.selection) {
+      case ROCK:
+        value = PAPER;
+        break;
+      case PAPER:
+        value = SCISSORS;
+        break;
+      case SCISSORS:
+        value = ROCK;
+        break;
+    }
+    return value;
+  }
+
+  getRandomLoseDialog(){
+    if (this.life > 0) {
+      return super.getRandomLoseDialog();
+    } else {
+      return this.getRandomLastDialog();
+    }
+  }
+
+  getRandomLastDialog(){
+    return this.lastDialogs[getRandomInt0to(this.lastDialogs.length - 1)];
   }
 }
 
-class SecretBoss extends Computer {
-  constructor(name, imagePath, life){
-    super(name, imagePath, life);
+class SecretBoss extends Boss {
+  constructor(data, imagePath, life){
+    super(data, imagePath, life);
     this.approaching = `${imagePath}approaching.jpg`;
     this.imagePath = imagePath;
     this.hand = null;
   }
 
   /**
-   * 1/2の確率で確実に勝つ手を出す
+   * 2/3の確率で確実に勝つ手を出す（勝率 1/9）
    */
   selectHand(){
-    switch (getRandomInt0to(1)) {
+    switch (getRandomInt0to(2)) {
       case 0:
         super.selectHand();
         break;
       default:
-        let value;
-        switch (player.selection) {
-          case ROCK:
-            value = PAPER;
-            break;
-          case PAPER:
-            value = SCISSORS;
-            break;
-          case SCISSORS:
-            value = ROCK;
-            break;
-        }
-        this.selection = value;
+        this.selection = this.getWinHand();
     }
     
     this.hand = `${this.imagePath}${this.selection}.jpg`;
   }
+}
+
+const takemiData = {
+  name: "タケミッチ"
+}
+
+const kiyomizuData = {
+  name: "清水将貴",
+  greeting: [
+    ["バット持ってこい"],
+    ["ウチの２年", "嗅ぎ回ってんの", "テメーらか？"]
+  ],
+  win: [
+    ["やってやったぜ"],
+    ["しゃあ！"]
+  ],
+  lose: [
+    ["ちくしょう！"],
+    ["うガァ！"]
+  ]
+}
+
+const bajiData = {
+  name: "場地圭介",
+  greeting: [
+    ["結果今日が", "決戦になった", "だけの話"],
+    ["場地圭介だ！！！"],
+    ["てめぇら　マイキーの", "愛車に手ぇ出したら", "殺すゾ！！"]
+  ],
+  win: [
+    ["チェックメイトだ"],
+    ["上等　上等"],
+    ["オレの愛車が", "東京一だ"]
+  ],
+  lose: [
+    ["オマエには", "殺られねぇ"],
+    ["上等　上等"],
+    ["カスリ傷だ"]
+  ]
+}
+
+const kisakiData = {
+  name: "稀咲鉄太",
+  greeting: [
+    ["大将は", "ウチの隊が責任持って", "守らせてもらう！！"],
+    ['横浜”天竺”', "稀咲鉄太だ！"]
+  ],
+  win: [
+    ["お前", "何びびってんだよ"],
+    ["待ってたぜ"],
+  ],
+  lose: [
+    ["・・・ハハ", "やっぱりそうか・・・"],
+    ["じゃあな！"]
+  ]
+}
+
+const dorakenData = {
+  name: "龍宮寺堅",
+  greeting: [
+    ["ケンじゃねえよ", "”ドラケン”だ！"]
+    ["外のヤツらは", "全員ノシた！"]
+  ],
+  win: [
+    ["攻めあるのみ"],
+    ["黙ってろ"],
+    ["オマエみたいな奴は", "そーいねえ"]
+  ],
+  lose: [
+    ["今ぁ", "準備運動が", "終わったトコだ"],
+    ["嬉しいぜ！", "久しぶりに本気になれそうだ！"],
+    ["上等だ・・・"]
+  ],
+  last: [
+    ["マイキーを","頼む"]
+  ]
+}
+
+const maikiData = {
+  name: "佐野万次郎",
+  greeting: [
+    ["楽しめよ", "・・祭りだぜ！？"],
+    ["日和ってる奴いる？", "・・いねえよなぁ！！？"]
+  ],
+  win: [
+    ["”無敵”のマイキー", "だぜ？"],
+    ["なーんてね"],
+    ["オレが後ろにいる限り","誰も負けねえんだよ！！"]
+  ],
+  lose: [
+    ["心がついてこねえ"],
+    ["オマエ", "負けてねえよ"],
+    ["・・・！"]
+  ],
+  last: [
+    ["タケミっち", "今日から", "俺のダチな❤️"]
+  ]
+}
+
+const sazaeData = {
+  name: "サザエさん",
+  greeting: [
+    ["じゃんけんで","わたしに勝てると","思ってるのかしら？"],
+  ],
+  win: [
+    ["うふふふふ"]
+  ],
+  lose: [
+    ["あ", "やべえ"]
+  ],
+  last: [
+    ["来週も","また見てくださいね"]
+  ]
 }
 
 let playerScore = 0;
@@ -168,28 +317,28 @@ let bonusHertNum = 2;
 
 let muteMode = false;
 
-const player = new Player("タケミッチ", `${CHARACTOR_ASSET_PATH}takemichi/`, 3);
+const player = new Player(takemiData, `${CHARACTOR_ASSET_PATH}takemichi/`, 3);
 
 const comsStage1 = [
-  new Computer("清水将貴", `${CHARACTOR_ASSET_PATH}kiyomizu/`, 3)
+  new Computer(kiyomizuData, `${CHARACTOR_ASSET_PATH}kiyomizu/`, 3)
 ];
 const comsStage2 = [
-  new Computer("場地圭介", `${CHARACTOR_ASSET_PATH}baji/`, 4),
-  new Computer("稀咲鉄太", `${CHARACTOR_ASSET_PATH}kisaki/`, 4),
+  new Computer(bajiData, `${CHARACTOR_ASSET_PATH}baji/`, 4),
+  new Computer(kisakiData, `${CHARACTOR_ASSET_PATH}kisaki/`, 4),
 ];
 const comsStage3 = [
-  new Boss("龍宮寺堅", `${CHARACTOR_ASSET_PATH}doraken/`, 4),
-  new Boss("佐野万次郎", `${CHARACTOR_ASSET_PATH}maiki/`, 3)
+  new Boss(dorakenData, `${CHARACTOR_ASSET_PATH}doraken/`, 4),
+  new Boss(maikiData, `${CHARACTOR_ASSET_PATH}maiki/`, 3)
 ];
 
-const secretBoss =   new SecretBoss("サザエさん", `${CHARACTOR_ASSET_PATH}sazae/`, 3);
+const secretBoss =   new SecretBoss(sazaeData, `${CHARACTOR_ASSET_PATH}sazae/`, 3);
 
 let coms;
 if (DEBUG) {
   coms = [
-    new Computer("清水将貴", `${CHARACTOR_ASSET_PATH}kiyomizu/`, 1),
-    new Computer("清水将貴", `${CHARACTOR_ASSET_PATH}kiyomizu/`, 3),
-    new Boss("清水将貴", `${CHARACTOR_ASSET_PATH}kiyomizu/`, 3)
+    new Computer(kiyomizuData, `${CHARACTOR_ASSET_PATH}kiyomizu/`, 1),
+    new Computer(kiyomizuData, `${CHARACTOR_ASSET_PATH}kiyomizu/`, 3),
+    new Boss(maikiData, `${CHARACTOR_ASSET_PATH}maiki/`, 3)
   ];
 } else {
   coms = [getComRandom(comsStage1), getComRandom(comsStage2), getComRandom(comsStage3)];  
@@ -295,6 +444,7 @@ function resetSelectionDisplay(){
   if (com.hand) {
     comFace.src = com.face;
   }
+  resetDialog("com");
 }
 
 function reduceLifeGuageBy(result) {
@@ -382,6 +532,43 @@ function awakenOff(){
   playerFace.src = player.face;
 }
 
+const comDialog = document.getElementById('com-dialog');
+const playerDialog = document.getElementById('player-dialog');
+
+async function displayDialog(dialogs, which){
+  resetDialog(which);
+  let displayed;
+  if (which == "player") {
+    displayed = playerDialog;
+  } else {
+    displayed = comDialog;
+  }
+  for (let i = 0; i < 3; i++) {
+    let dialog = dialogs[i];
+    if (!dialog) {
+      dialog = `&nbsp;`;
+      displayed.children[i] = dialog;
+    } else {
+      let strings = dialog.split('');
+      for(let j = 0; j < strings.length; j++){
+        await wait(75);
+        displayed.children[i].innerHTML += strings[j];
+      }
+    }
+    await wait(150);
+  }
+}
+
+function resetDialog(which){
+  let displayed;
+  if (which == "player") {
+    displayed = playerDialog;
+  } else {
+    displayed = comDialog;
+  }
+  displayed.innerHTML = `<h3>&nbsp;</h3><h3>&nbsp;</h3><h3>&nbsp;</h3>`;
+}
+
 function initBoards() {
   const start = document.getElementById('start');
   const boards = document.getElementById('boards');
@@ -406,6 +593,7 @@ function initBoards() {
 
 async function updateBoard(){
   resetBord();
+  resetDialog("com");
   com = coms[stage - 1];
   displayLifeGauge(player);
   if (stage != 1 && bonusHertNum > 0) {
@@ -413,6 +601,8 @@ async function updateBoard(){
   }
   await wait(2000);
   displayCom(com);
+  await wait(500);
+  displayDialog(com.getRandomGreeting());
   if (isLastStage()) {
     muteki.remove();
   }
@@ -578,12 +768,11 @@ async function gameFlow(){
     } else {
       await updateBoard();
     }
+    hasAwakenInStage = false;
     while(!endStage()){
-      let hasAwakenInStage = false;
       resetSelectionDisplay();
-
       if (stage >= 2 && !hasAwakenInStage && player.canAwaken()) {
-        switch (getRandomInt0to(0)) {
+        switch (getRandomInt0to(DEBUG ? 0 : 3)) {
           case 0:
             awakenOn();
         }
@@ -610,6 +799,14 @@ async function gameFlow(){
         reduceLifeGuageBy(result);
       } else {
         reduceLifeGuageBy(result);
+      }
+      switch (result) {
+        case PLAYER_WIN:
+          displayDialog(com.getRandomLoseDialog());
+          break;
+        case COM_WIN:
+          displayDialog(com.getRandomWinDialog());
+          break;
       }
       await wait(2000);
     }
