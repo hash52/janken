@@ -1,4 +1,4 @@
-const DEBUG = true;
+const DEBUG = false;
 
 //外部モジュール化はサーバーを立てないと不可
 class Charactor{
@@ -37,7 +37,8 @@ class Player extends Charactor {
     this.inspiringDialogs = data.inspire;
     this.defeatedFace = `${imagePath}defeated_face.jpg`;
     this.awakeningFace = `${imagePath}awakening_face.jpg`;
-    this.superAwakenFace = `${imagePath}super_awakening_face.jpg`
+    this.superAwakenFace = `${imagePath}super_awakening_face.jpg`;
+    this.defeatedSecretFace = `${imagePath}defeated_secret_face.jpg`;
     this.isAwakening = false;
     this.isSuperAwakening = false;
   }
@@ -55,10 +56,10 @@ class Player extends Charactor {
             displayDialog(this.getDialogAtRandom(this.inspiringDialogs),"player");
             awakenSound.play();
             this.life = 0.1;
+            message.innerHTML += `<span style="color: red">【タケミチは耐えた！】</span>`;
         }
         if(DEBUG){
           awakenSound.play();
-          displayDialog(this.getDialogAtRandom(this.inspiringDialogs),"player");
           this.life = 0.1;
         }
       }
@@ -93,7 +94,7 @@ class Player extends Charactor {
     awakenSound.play();
     playerFace.src = this.superAwakenFace;
     displayLifeGauge(player);
-    await wait(awakenSound.duration * 1000);
+    await wait(awakenSound.duration * 900);
     setBgm(superAwakenBgm);
     bgm.play();
   }
@@ -201,10 +202,10 @@ class SecretBoss extends Boss {
 const takemiData = {
   name: "タケミっち",
   inspire: [
-    ["オレが変わらないと", "何も変えれない"],
+    ["オレが変わらないと", "何も変えれない！！"],
     ["引けねえんだよ！！", "引けねえ理由があるんだよ！！！！"],
-    ["オレが逃げたら", "ここで終わりだ"],
-    ["これはオレの人生の", "リベンジだ"],
+    ["オレが逃げたら", "ここで終わりだ・・！"],
+    ["これはオレの人生の", "リベンジだ！！！！！"],
     ["オレはッッ", "花垣武道だ！！！"],
     ["オレは一人でも・・・", "引くワケにはいかねぇ・・！！"],
     ["諦めねぇ・・・！！！"]
@@ -365,14 +366,14 @@ let muteMode = false;
 const player = new Player(takemiData, `${CHARACTOR_ASSET_PATH}takemichi/`, 3);
 
 const comsStage1 = [
-  new Computer(kiyomizuData, `${CHARACTOR_ASSET_PATH}kiyomizu/`, 3)
+  new Computer(kiyomizuData, `${CHARACTOR_ASSET_PATH}kiyomizu/`, 2)
 ];
 const comsStage2 = [
-  new Computer(bajiData, `${CHARACTOR_ASSET_PATH}baji/`, 4),
-  new Computer(kisakiData, `${CHARACTOR_ASSET_PATH}kisaki/`, 4),
+  new Computer(bajiData, `${CHARACTOR_ASSET_PATH}baji/`, 3),
+  new Computer(kisakiData, `${CHARACTOR_ASSET_PATH}kisaki/`, 3),
 ];
 const comsStage3 = [
-  new Boss(dorakenData, `${CHARACTOR_ASSET_PATH}doraken/`, 4),
+  new Boss(dorakenData, `${CHARACTOR_ASSET_PATH}doraken/`, 3),
   new Boss(maikiData, `${CHARACTOR_ASSET_PATH}maiki/`, 3)
 ];
 
@@ -526,7 +527,7 @@ function endStage() {
 
 function whoWon() {
   if (com.life === 0) {
-    alert('おめでとう！Player1の勝利！');
+    alert('おめでとう！Playerの勝利！');
   } else {
     alert('Computerの勝利！残念でした〜');
   }
@@ -626,6 +627,7 @@ function resetDialog(which){
   } else {
     displayed = comDialog;
   }
+
   displayed.innerHTML = `<h4>&nbsp;</h4><h4>&nbsp;</h4><h4>&nbsp;</h4>`;
 }
 
@@ -891,7 +893,11 @@ async function gameFlow(){
     if (player.life > 0) {
       comIcons[stage - 1].src = com.defeatedIcon;
     } else {
-      playerFace.src = player.defeatedFace;
+      if (com instanceof SecretBoss) {
+        playerFace.src = player.defeatedSecretFace;
+      } else {
+        playerFace.src = player.defeatedFace;
+      }
       await wait(1000);
     }
     whoWon();
