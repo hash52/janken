@@ -26,8 +26,8 @@ class Charactor{
     return this.maxLife - this.life;
   }
 
-  getDialogFromKey(){
-
+  getDialogAtRandom(dialogs){
+    return dialogs[getRandomInt0to(dialogs.length - 1)];
   }
 }
 
@@ -118,16 +118,8 @@ class Computer extends Charactor {
     return this.selection = DEBUG ? ROCK : value;
   }
 
-  getRandomGreeting(){
-    return this.greetings[getRandomInt0to(this.greetings.length - 1)];
-  }
-
-  getRandomWinDialog(){
-    return this.winDialogs[getRandomInt0to(this.winDialogs.length - 1)];
-  }
-
   getRandomLoseDialog(){
-    return this.loseDialogs[getRandomInt0to(this.loseDialogs.length - 1)];
+    return this.getDialogAtRandom(this.loseDialogs);
   }
 }
 
@@ -171,12 +163,8 @@ class Boss extends Computer {
     if (this.life > 0) {
       return super.getRandomLoseDialog();
     } else {
-      return this.getRandomLastDialog();
+      return this.getDialogAtRandom(this.lastDialogs);
     }
-  }
-
-  getRandomLastDialog(){
-    return this.lastDialogs[getRandomInt0to(this.lastDialogs.length - 1)];
   }
 }
 
@@ -658,7 +646,7 @@ async function updateBoard(){
   await wait(2000);
   displayCom(com);
   await wait(500);
-  displayDialog(com.getRandomGreeting());
+  displayDialog(com.getDialogAtRandom(com.greetings));
   if (isLastStage()) {
     muteki.remove();
   }
@@ -873,7 +861,7 @@ async function gameFlow(){
           displayDialog(com.getRandomLoseDialog());
           break;
         case COM_WIN:
-          displayDialog(com.getRandomWinDialog());
+          displayDialog(com.getDialogAtRandom(com.winDialogs));
           break;
       }
       await wait(2000);
