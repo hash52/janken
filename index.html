@@ -19,107 +19,32 @@
         ルール説明
       </button>
     </nav>
-    <div class="text-center mt-3">
-      <h1 id="victory-condition"></h1>
-    </div>
     <div class="row">
-      <div id="message" class="col-6 offset-3 d-flex align-items-center justify-content-center"></div>
-      <div class="col-3" id="com-list">
-        <div class="row"> 
-          <img src='assets/charactors/icon_question.png' class='col img-fluid pb-3 px-1' id='com0'/>
-          <img src='assets/charactors/icon_question.png' class='col img-fluid pb-3 px-1' id='com1'/>
-          <img src='assets/charactors/icon_question.png' class='col img-fluid pb-3 px-1' id='com2'/>
-          <div class='col'></div>
-        </div>
+      <div class="col-lg-2">
       </div>
-    </div>
-    <div id="pri-rule-explanation">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLongTitle">ルール説明</h5>
+      <div class="col-lg-8">
+        <div class="text-center mt-3">
+          <h1 id="victory-condition"></h1>
         </div>
-        <div class="modal-body">
-          <ul class="list-group">
-            <li class="list-group-item list-group-item-dark">「START GAME！」を押すとゲームが始まります。</li>
-            <li class="list-group-item list-group-item-dark"><i class="fas fa-hand-rock"></i><i class="fas fa-hand-scissors"></i><i class="fas fa-hand-paper"></i>から選択しましょう！</li>
-            <li class="list-group-item list-group-item-dark"><i class="fas fa-hand-rock"></i> は <i class="fas fa-hand-scissors"></i> に、</li>
-            <li class="list-group-item list-group-item-dark"><i class="fas fa-hand-scissors"></i> は <i class="fas fa-hand-paper"></i> に、</li>
-            <li class="list-group-item list-group-item-dark"><i class="fas fa-hand-paper"></i> は <i class="fas fa-hand-rock"></i> に勝てます。</li>
-            <li class="list-group-item list-group-item-dark">１人倒すごとにライフが２回復します。</li>
-            <li class="list-group-item list-group-item-dark">「無敵」は <i class="fas fa-hand-rock"></i><i class="fas fa-hand-scissors"></i><i class="fas fa-hand-paper"></i> 全てに勝てますが、<br>使う毎に、終了後の回復ライフが１減ってしまいます。</li>
-            <li class="list-group-item list-group-item-dark">「無敵」の使用回数はバトル毎にリセットされます。</li>
-            <li class="list-group-item list-group-item-dark">「無敵」ばかり使ってラクをしていると・・・？？</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-    <div id="special-message">
-    </div>
-    <div class="text-center m-5" id="start">
-      <input type="submit" id="startGame" class="btn btn-dark" value="START GAME！">
-    </div>
-    <div id="boards" class="boards">
-      <div class="row">        
-        <div class="col offset-1 border p-0"> 
-          <div class="row">
-            <div class="col-8 border-right pr-0">
-              <div id="player-life" class="row text-center w-100 m-0 ml-1 border-bottom life-guage"></div>
-              <h2 class="text-center my-3 text-truncate">Player</h2>  
-              <img class="img-fluid" src="assets/charactors/takemichi/face.jpg">
-            </div>
-            <div class="col-4 d-flex align-items-center justify-content-center">
-              <div id="playerSelect"></div>
+        <div class="row">
+          <div id="message" class="col-6 offset-3 d-flex align-items-center justify-content-center"></div>
+          <div class="col-3" id="com-list">
+            <div class="row"> 
+              <img src='assets/charactors/icon_question.png' class='col img-fluid pb-3 px-1' id='com0'/>
+              <img src='assets/charactors/icon_question.png' class='col img-fluid pb-3 px-1' id='com1'/>
+              <img src='assets/charactors/icon_question.png' class='col img-fluid pb-3 px-1' id='com2'/>
+              <div class='col'></div>
             </div>
           </div>
-          <div class="dialogue-box border-top p-2" id="player-dialog">
-            <h2>aaaaa</h2>
-            <h2>aaaaa</h2>
-            <h2>aaaaa</h2>
-          </div>
         </div>
-        <div class="col-1 d-flex align-items-center justify-content-center">
-          <h2>VS</h2>
-        </div>
-        <div class="col border p-0"> 
-          <div class="row">
-            <div class="col-4 d-flex align-items-center justify-content-center">
-              <div id="computerSelect"></div>
-            </div>
-            <div class="col-8 border-left pl-0">
-              <div id="com-life" class="row text-center w-100 m-0 ml-1 border-bottom life-guage"></div>
-              <h2 class="text-center my-3 text-truncate">COM: <span id="com-name"></span></h2>  
-              <img class="img-fluid" id="com-img" src="assets/question.jpg">
-            </div>
-          </div>
-          <div class="dialogue-box border-top p-2" id="player-dialog">
-            <h2>bbbb</h2>
-            <h2>bbbbb</h2>
-            <h2>bbbbbb</h2>
-          </div>
-        </div>
-        <div class="col-1"></div>
-    </div>
-    <div id="select" class="text-center w-50 mx-auto my-3 select">
-      <div class="row">
-        <div id="rock" class="col not-muteki"><i class="fas fa-hand-rock"></i></div>
-        <div id="paper" class="col not-muteki"><i class="fas fa-hand-paper"></i></div>
-        <div id="scissors" class="col not-muteki"><i class="fas fa-hand-scissors"></i></div>
-        <div id="muteki" class="col"><i class="fas fa-hand-muteki"><img src="assets/muteki.png"/></i><br><span style="color: #007500;">無敵</span></div>
-      </div>
-    </div>
-    <!-- Modal -->
-    <div class="modal fade" id="rule-modal" tabindex="-1" role="dialog" aria-labelledby="rule-modalTitle" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
+        <div id="pri-rule-explanation">
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title" id="exampleModalLongTitle">ルール説明</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
             </div>
             <div class="modal-body">
               <ul class="list-group">
-                <li class="list-group-item list-group-item-dark">「START GAME!」を押すとゲームが始まります。</li>
+                <li class="list-group-item list-group-item-dark">「START GAME！」を押すとゲームが始まります。</li>
                 <li class="list-group-item list-group-item-dark"><i class="fas fa-hand-rock"></i><i class="fas fa-hand-scissors"></i><i class="fas fa-hand-paper"></i>から選択しましょう！</li>
                 <li class="list-group-item list-group-item-dark"><i class="fas fa-hand-rock"></i> は <i class="fas fa-hand-scissors"></i> に、</li>
                 <li class="list-group-item list-group-item-dark"><i class="fas fa-hand-scissors"></i> は <i class="fas fa-hand-paper"></i> に、</li>
@@ -130,13 +55,97 @@
                 <li class="list-group-item list-group-item-dark">「無敵」ばかり使ってラクをしていると・・・？？</li>
               </ul>
             </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-dark" data-dismiss="modal">Close</button>
-            </div>
           </div>
         </div>
-    </div>    
-    <!-- end Modal -->
+        <div id="special-message">
+        </div>
+        <div class="text-center m-5" id="start">
+          <input type="submit" id="startGame" class="btn btn-dark" value="START GAME！">
+        </div>
+        <div id="boards" class="boards">
+          <div class="row">        
+            <div class="col offset-1 border p-0"> 
+              <div class="row">
+                <div class="col-8 border-right pr-0">
+                  <div id="player-life" class="row text-center w-100 m-0 ml-1 border-bottom life-guage"></div>
+                  <h2 class="text-center my-3 text-truncate">Player</h2>  
+                  <img class="img-fluid" src="assets/charactors/takemichi/face.jpg">
+                </div>
+                <div class="col-4 d-flex align-items-center justify-content-center">
+                  <div id="playerSelect"></div>
+                </div>
+              </div>
+              <div class="dialogue-box border-top p-2" id="player-dialog">
+                <h2>aaaaa</h2>
+                <h2>aaaaa</h2>
+                <h2>aaaaa</h2>
+              </div>
+            </div>
+            <div class="col-1 d-flex align-items-center justify-content-center">
+              <h2>VS</h2>
+            </div>
+            <div class="col border p-0"> 
+              <div class="row">
+                <div class="col-4 d-flex align-items-center justify-content-center">
+                  <div id="computerSelect"></div>
+                </div>
+                <div class="col-8 border-left pl-0">
+                  <div id="com-life" class="row text-center w-100 m-0 ml-1 border-bottom life-guage"></div>
+                  <h2 class="text-center my-3 text-truncate">COM: <span id="com-name"></span></h2>  
+                  <img class="img-fluid" id="com-img" src="assets/question.jpg">
+                </div>
+              </div>
+              <div class="dialogue-box border-top p-2" id="player-dialog">
+                <h2>bbbb</h2>
+                <h2>bbbbb</h2>
+                <h2>bbbbbb</h2>
+              </div>
+            </div>
+            <div class="col-1"></div>
+        </div>
+        <div id="select" class="text-center w-50 mx-auto my-3 select">
+          <div class="row">
+            <div id="rock" class="col not-muteki"><i class="fas fa-hand-rock"></i></div>
+            <div id="paper" class="col not-muteki"><i class="fas fa-hand-paper"></i></div>
+            <div id="scissors" class="col not-muteki"><i class="fas fa-hand-scissors"></i></div>
+            <div id="muteki" class="col"><i class="fas fa-hand-muteki"><img src="assets/muteki.png"/></i><br><span style="color: #007500;">無敵</span></div>
+          </div>
+        </div>
+        <!-- Modal -->
+        <div class="modal fade" id="rule-modal" tabindex="-1" role="dialog" aria-labelledby="rule-modalTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLongTitle">ルール説明</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <ul class="list-group">
+                    <li class="list-group-item list-group-item-dark">「START GAME!」を押すとゲームが始まります。</li>
+                    <li class="list-group-item list-group-item-dark"><i class="fas fa-hand-rock"></i><i class="fas fa-hand-scissors"></i><i class="fas fa-hand-paper"></i>から選択しましょう！</li>
+                    <li class="list-group-item list-group-item-dark"><i class="fas fa-hand-rock"></i> は <i class="fas fa-hand-scissors"></i> に、</li>
+                    <li class="list-group-item list-group-item-dark"><i class="fas fa-hand-scissors"></i> は <i class="fas fa-hand-paper"></i> に、</li>
+                    <li class="list-group-item list-group-item-dark"><i class="fas fa-hand-paper"></i> は <i class="fas fa-hand-rock"></i> に勝てます。</li>
+                    <li class="list-group-item list-group-item-dark">１人倒すごとにライフが２回復します。</li>
+                    <li class="list-group-item list-group-item-dark">「無敵」は <i class="fas fa-hand-rock"></i><i class="fas fa-hand-scissors"></i><i class="fas fa-hand-paper"></i> 全てに勝てますが、<br>使う毎に、終了後の回復ライフが１減ってしまいます。</li>
+                    <li class="list-group-item list-group-item-dark">「無敵」の使用回数はバトル毎にリセットされます。</li>
+                    <li class="list-group-item list-group-item-dark">「無敵」ばかり使ってラクをしていると・・・？？</li>
+                  </ul>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-dark" data-dismiss="modal">Close</button>
+                </div>
+              </div>
+            </div>
+        </div>    
+        <!-- end Modal -->
+      </div>
+      <div class="col-lg-2">
+      </div>
+    </div>
+    
     <footer class="bg-dark">
       <p>Author:&copy; HirokiHashi<br>
         <a href="https://docs.google.com/presentation/d/17OPLG6zhPZBCnnCD4nsiw8gsU6CV9afrDKXLlyiIG2E/edit?usp=sharing">職業人講話 2021/10/13</a></p>
