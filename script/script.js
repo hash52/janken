@@ -135,7 +135,7 @@ let bonusHertNum = 2;
 
 let muteMode = false;
 
-const player = new Charactor("タケミッチ", `${CHARACTOR_ASSET_PATH}takemichi`, 3, 50, Charactor.PLAYER);
+const player = new Charactor("タケミッチ", `${CHARACTOR_ASSET_PATH}takemichi`, 3, 3, Charactor.PLAYER);
 
 const comsStage1 = [
   new Charactor("清水将貴", `${CHARACTOR_ASSET_PATH}kiyomizu/`, 3, 10, Charactor.COM)
