@@ -2,8 +2,8 @@ const DEBUG = true;
 
 //外部モジュール化はサーバーを立てないと不可
 class Charactor{
-  constructor(name, imagePath, life){
-      this.name = name;
+  constructor(data, imagePath, life){
+      this.name = data.name;
       this.face = `${imagePath}face.jpg`;
       this.life = life;
       this.maxLife = life;
@@ -34,6 +34,7 @@ class Charactor{
 class Player extends Charactor {
   constructor(data, imagePath, life){
     super(data, imagePath, life);
+    this.inspiringDialogs = data.inspire;
     this.defeatedFace = `${imagePath}defeated_face.jpg`;
     this.awakeningFace = `${imagePath}awakening_face.jpg`;
     this.superAwakenFace = `${imagePath}super_awakening_face.jpg`
@@ -51,12 +52,13 @@ class Player extends Charactor {
             this.life = 0;
             break;
           default:
+            displayDialog(this.getDialogAtRandom(this.inspiringDialogs),"player");
             awakenSound.play();
             this.life = 0.1;
         }
         if(DEBUG){
           awakenSound.play();
-          displayDialog(["負けないよ"],"player");
+          displayDialog(this.getDialogAtRandom(this.inspiringDialogs),"player");
           this.life = 0.1;
         }
       }
@@ -95,7 +97,7 @@ class Player extends Charactor {
 
 class Computer extends Charactor {
   constructor(data, imagePath, life){
-    super(data.name, imagePath, life);
+    super(data, imagePath, life);
     this.icon = `${imagePath}icon.png`;
     this.greetings = data.greeting;
     this.winDialogs = data.win;
@@ -193,7 +195,16 @@ class SecretBoss extends Boss {
 }
 
 const takemiData = {
-  name: "タケミッチ"
+  name: "タケミっち",
+  inspire: [
+    ["オレが変わらないと", "何も変えれない"],
+    ["引けねえんだよ！！", "引けねえ理由があるんだよ！！！！"],
+    ["オレが逃げたら", "ここで終わりだ"],
+    ["これはオレの人生の", "リベンジだ"],
+    ["オレはッッ", "花垣武道だ！！！"],
+    ["オレは一人でも・・・", "引くワケにはいかねぇ・・！！"],
+    ["諦めねぇ・・・！！！"]
+  ]
 }
 
 const kiyomizuData = {
@@ -485,6 +496,7 @@ function resetSelectionDisplay(){
     comFace.src = com.face;
   }
   resetDialog("com");
+  resetDialog("player");
 }
 
 function reduceLifeGuageBy(result) {
@@ -610,7 +622,7 @@ function resetDialog(which){
   } else {
     displayed = comDialog;
   }
-  displayed.innerHTML = `<h3>&nbsp;</h3><h3>&nbsp;</h3><h3>&nbsp;</h3>`;
+  displayed.innerHTML = `<h4>&nbsp;</h4><h4>&nbsp;</h4><h4>&nbsp;</h4>`;
 }
 
 function initBoards() {
@@ -637,7 +649,6 @@ function initBoards() {
 
 async function updateBoard(){
   resetBord();
-  resetDialog("com");
   com = coms[stage - 1];
   displayLifeGauge(player);
   if (stage != 1 && bonusHertNum > 0) {
@@ -706,6 +717,8 @@ async function appearMessage(messageImg, animationDuration, duration, parmanent,
 }
 
 function resetBord(){
+  resetDialog("com");
+  resetDialog("player");
   playerSelect.innerHTML = '';
   compSelect.innerHTML = '';
   playerSelect.style.color = '';
@@ -849,6 +862,7 @@ async function gameFlow(){
         }
         //覚醒なら相手に２倍ダメージ, 
       } else if (player.isAwakening && result == PLAYER_WIN) {
+        displayDialog(player.getDialogAtRandom(player.inspiringDialogs),"player");
         reduceLifeGuageBy(result);
         await wait(500);
         reduceLifeGuageBy(result);
