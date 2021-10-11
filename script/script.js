@@ -36,7 +36,31 @@ class Player extends Charactor {
     super(data, imagePath, life);
     this.defeatedFace = `${imagePath}defeated_face.jpg`;
     this.awakeningFace = `${imagePath}awakening_face.jpg`;
+    this.superAwakenFace = `${imagePath}super_awakening_face.jpg`
     this.isAwakening = false;
+    this.isSuperAwakening = false;
+  }
+
+  lostLife(){
+    super.lostLife();
+    if (this.life == 0) {
+      //ステージ３で２度目以降に負けそうになったら2/3でlife=0.1
+      if (this.isSuperAwakening) {
+        switch(getRandomInt0to(2)) {
+          case 0:
+            this.life = 0;
+            break;
+          default:
+            awakenSound.play();
+            this.life = 0.1;
+        }
+        if(DEBUG){
+          awakenSound.play();
+          displayDialog(["負けないよ"],"player");
+          this.life = 0.1;
+        }
+      }
+    }
   }
 
   awaken(){
@@ -50,7 +74,22 @@ class Player extends Charactor {
   }
 
   canAwaken(){
-    return this.life < 1.5 && !this.isAwakening;
+    return this.life <= this.maxLife / 2 && !this.isAwakening && !this.isSuperAwakening;
+  }
+
+  async superAwaken(){
+    this.life = 0.1;
+    this.isSuperAwakening = true;
+    bgm.pause();
+    await wait(1500);
+    hinataVoice.play();
+    await appearMessage(HINATA_IMG, 700, hinataVoice.duration * 1000, false, movieMessage);
+    awakenSound.play();
+    playerFace.src = this.superAwakenFace;
+    displayLifeGauge(player);
+    await wait(awakenSound.duration * 1000);
+    setBgm(superAwakenBgm);
+    bgm.play();
   }
 }
 
@@ -223,7 +262,7 @@ const kisakiData = {
 const dorakenData = {
   name: "龍宮寺堅",
   greeting: [
-    ["ケンじゃねえよ", "”ドラケン”だ！"]
+    ["ケンじゃねえよ", "”ドラケン”だ！"],
     ["外のヤツらは", "全員ノシた！"]
   ],
   win: [
@@ -288,6 +327,8 @@ const cLife = document.getElementById('com-life');
 const compSelect = document.getElementById('computerSelect');
 const playerSelect = document.getElementById('playerSelect');
 const message = document.getElementById('message');
+const spMessage = document.getElementById('special-message');
+const movieMessage = document.getElementById('movie-message');
 const playerFace = document.getElementById('player-face');
 const comFace = document.getElementById('com-face');
 const comName = document.getElementById('com-name');
@@ -310,6 +351,7 @@ const CHARACTOR_ASSET_PATH = `${ASSET_PATH}charactors/`;
 const HEART = `<img src=${ASSET_PATH}heart.jpg class='col img-fluid p-0'>`;
 const HEART_EMPTY = `<img src=${ASSET_PATH}heart-empty.jpg class='col img-fluid p-0'>`;
 const HEART_HALF = `<img src=${ASSET_PATH}heart-half.jpg class='col img-fluid p-0'>`;
+const HEART_FEW = `<img src=${ASSET_PATH}heart-few.jpg class='col img-fluid p-0'>`;
 const COL = `<div class="col p-0"></div>`;
 
 const MAX_LIFE_NUM = 7;
@@ -354,20 +396,30 @@ const PLAYER_WIN = 'Player1の勝ち！';
 const COM_WIN = 'Computerの勝ち！';
 const DRAW = 'あいこ';
 
-const MUSIC_PATH = `${ASSET_PATH}music/`
+const MUSIC_PATH = `${ASSET_PATH}music/`;
 
-let defaultBgm = new Audio(`${MUSIC_PATH}/this_is_revenge.mp3`);
-const secretBossBgm = new Audio(`${MUSIC_PATH}/sazaesan.mp3`);
-const approachingSound = new Audio(`${MUSIC_PATH}/approaching.mp3`);
-const awakenSound = new Audio(`${MUSIC_PATH}/awaken.mp3`);
+let defaultBgm = new Audio(`${MUSIC_PATH}this_is_revenge.mp3`);
+const secretBossBgm = new Audio(`${MUSIC_PATH}sazaesan.mp3`);
+const superAwakenBgm = new Audio(`${MUSIC_PATH}crybaby.mp3`);
+const approachingSound = new Audio(`${MUSIC_PATH}approaching.mp3`);
+const awakenSound = new Audio(`${MUSIC_PATH}awaken.mp3`);
+const hinataVoice = new Audio(`${MUSIC_PATH}hinata_voice.mp3`);
 
+const HINATA_IMG = `${ASSET_PATH}hinata.jpg`;
 const THANKS_IMG = `${ASSET_PATH}thankyou.jpg`;
 
 defaultBgm.volumeConf = 0.1;
+defaultBgm.loop = true;
 secretBossBgm.volumeConf = 0.3;
+secretBossBgm.loop = true;
+superAwakenBgm.volumeConf = 0.2;
+superAwakenBgm.loop = true;
+superAwakenBgm.currentTime = 40;
+
 approachingSound.volumeConf = 0.7;
 //FIXME 覚醒音はBGMに重ねるので、volumeConfを使って音量を制御できない
 awakenSound.volume = 0.5;
+hinataVoice.volume = 0.5;
 
 let goSecretBoss = true;
 
@@ -496,7 +548,11 @@ function displayLifeGauge(charactor){
     lifeGaugeLength++;
   }
   if(!Number.isInteger(charactor.life)){
-    lifeGauge += HEART_HALF;
+    if (charactor.life == 0.1) {
+      lifeGauge += HEART_FEW;
+    } else {
+      lifeGauge += HEART_HALF;
+    }
     lifeGaugeLength++;
   }
   let emptyHertNum = Number.isInteger(charactor.maxLife) ? Math.floor(charactor.getLostLifeInThisGame()) : Math.ceil(charactor.getLostLifeInThisGame());
@@ -619,7 +675,7 @@ async function updateBoardForSecretBoss(){
   bgm.pause();
   setBgm(approachingSound);
   bgm.play();
-  await appearSpMessage(com.approaching, 800, approachingSound.duration * 1000, false)
+  await appearMessage(com.approaching, 800, approachingSound.duration * 1000, false, spMessage)
   bgm.pause();
   setBgm(secretBossBgm)
   bgm.play();
@@ -636,10 +692,9 @@ function displayCom(com) {
 }
 
 
-async function appearSpMessage(messageImg, animationDuration, duration, parmanent){
-  const spMessage = document.getElementById('special-message');
-  spMessage.innerHTML = `<img class="img-fluid" src=${messageImg}>`;
-  spMessage.animate([
+async function appearMessage(messageImg, animationDuration, duration, parmanent, target){
+  target.innerHTML = `<img class="img-fluid" src=${messageImg}>`;
+  target.animate([
     {opacity: 0},
     {opacity: 1}
   ],
@@ -649,7 +704,7 @@ async function appearSpMessage(messageImg, animationDuration, duration, parmanen
   });
   await wait(duration);
   if (!parmanent) {
-    spMessage.animate([
+    target.animate([
       {opacity: 1},
       {opacity: 0}
     ],
@@ -658,6 +713,8 @@ async function appearSpMessage(messageImg, animationDuration, duration, parmanen
       fill: 'forwards'
     });
   }
+  await wait(animationDuration);
+  target.innerHTML = ``;
 }
 
 function resetBord(){
@@ -771,9 +828,11 @@ async function gameFlow(){
     hasAwakenInStage = false;
     while(!endStage()){
       resetSelectionDisplay();
-      if (stage >= 2 && !hasAwakenInStage && player.canAwaken()) {
-        switch (getRandomInt0to(DEBUG ? 0 : 3)) {
+      if (!hasAwakenInStage && player.canAwaken()) {
+        // 覚醒の発動確率＝2/5
+        switch (getRandomInt0to(DEBUG ? 0 : 4)) {
           case 0:
+          case 1:
             awakenOn();
         }
       }
@@ -792,12 +851,21 @@ async function gameFlow(){
       let result = playRound(player, com);
       displaySelectionsBy(result);
       message.innerText = result;
-      //覚醒状態なら相手に倍ダメージ
-      if (player.isAwakening && result == PLAYER_WIN) {
+      //スーバー覚醒なら相手に２〜４倍のダメージ
+      if (player.isSuperAwakening && result == PLAYER_WIN) {
+        for (let i = 0; i < 2 + getRandomInt0to(2); i++) {
+          if (i != 0) {
+            await wait(500);
+          }
+          reduceLifeGuageBy(result);
+        }
+        //覚醒なら相手に２倍ダメージ, 
+      } else if (player.isAwakening && result == PLAYER_WIN) {
         reduceLifeGuageBy(result);
         await wait(500);
         reduceLifeGuageBy(result);
       } else {
+        //通常ダメージ
         reduceLifeGuageBy(result);
       }
       switch (result) {
@@ -809,6 +877,9 @@ async function gameFlow(){
           break;
       }
       await wait(2000);
+      if(stage == coms.length && player.life <= 0 && !player.isSuperAwakening) {
+        await player.superAwaken();
+      } 
     }
     if (player.life > 0) {
       comIcons[stage - 1].src = com.defeatedIcon;
@@ -820,7 +891,7 @@ async function gameFlow(){
     stage++;
   }
   if (player.life > 0) {
-    await appearSpMessage(THANKS_IMG, 500, 10000, true);
+    await appearMessage(THANKS_IMG, 500, 10000, true, spMessage);
   }
   reload();
 }

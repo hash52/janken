@@ -35,6 +35,12 @@
   position: absolute;
 }
 
+#movie-message {
+  opacity: 0;
+  z-index: 10;
+  position: absolute;
+}
+
 html, body {
   height: 100%;
 }
