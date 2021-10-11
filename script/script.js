@@ -864,9 +864,10 @@ async function gameFlow(){
       let result = playRound(player, com);
       displaySelectionsBy(result);
       message.innerText = result;
-      //スーバー覚醒なら相手に2〜5倍のダメージ
+      //スーバー覚醒なら相手に3〜6倍のダメージ
       if (player.isSuperAwakening && result == PLAYER_WIN) {
-        for (let i = 0; i < 2 + getRandomInt0to(3); i++) {
+        awakenSound.play();
+        for (let i = 0; i < 3 + getRandomInt0to(3); i++) {
           if (i != 0) {
             await wait(500);
           }
