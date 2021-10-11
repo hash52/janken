@@ -1,3 +1,5 @@
+const DEBUG = true;
+
 //外部モジュール化はサーバーを立てないと不可
 class Charactor{
   constructor(name, imagePath, life, lv){
@@ -47,7 +49,7 @@ class Computer extends Charactor {
       default:
         value = SCISSORS;
     }
-    return this.selection = value;
+    return this.selection = DEBUG ? ROCK : value;
   }
 }
 
@@ -142,7 +144,7 @@ let bonusHertNum = 2;
 
 let muteMode = false;
 
-const player = new Player("タケミッチ", `${CHARACTOR_ASSET_PATH}takemichi`, 3, 3);
+const player = new Player("タケミッチ", `${CHARACTOR_ASSET_PATH}takemichi/`, 3, 3);
 
 const comsStage1 = [
   new Computer("清水将貴", `${CHARACTOR_ASSET_PATH}kiyomizu/`, 3, 10)
@@ -158,9 +160,12 @@ const comsStage3 = [
 
 const secretBoss =   new SecretBoss("サザエさん", `${CHARACTOR_ASSET_PATH}sazae/`, 3, 49);
 
-const coms = [getComRandom(comsStage1), getComRandom(comsStage2), getComRandom(comsStage3)];
-// DEBUG対戦用
-// const coms = [new Charactor("清水将貴", `${CHARACTOR_ASSET_PATH}kiyomizu/`, 1, 10),new Charactor("清水将貴", `${CHARACTOR_ASSET_PATH}kiyomizu/`, 1, 10),new Charactor("清水将貴", `${CHARACTOR_ASSET_PATH}kiyomizu/`, 1, 10)]
+let coms;
+if (DEBUG) {
+  coms = [new Computer("清水将貴", `${CHARACTOR_ASSET_PATH}kiyomizu/`, 1, 10),new Computer("清水将貴", `${CHARACTOR_ASSET_PATH}kiyomizu/`, 1, 10),new Computer("清水将貴", `${CHARACTOR_ASSET_PATH}kiyomizu/`, 1, 10)];
+} else {
+  coms = [getComRandom(comsStage1), getComRandom(comsStage2), getComRandom(comsStage3)];  
+}
 
 let stage = 1;
 let com;
@@ -337,6 +342,9 @@ function initBoards() {
   const comlist = document.getElementById('com-list');
   const rule = document.getElementById('pri-rule-explanation');
   const ruleButton = document.getElementById('rule-button');
+  if (DEBUG) {
+    document.getElementById('game-title').innerHTML = "DEBUG MODE";
+  }
   start.style.display = 'none';
   rule.style.display = 'none';
   ruleButton.style.display = 'block';
