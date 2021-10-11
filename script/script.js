@@ -68,11 +68,15 @@ class Player extends Charactor {
   awaken(){
     this.isAwakening = true;
     this.loseLife = 0.5;
+    if(stage != coms.length){
+      caution.style.display = 'block';
+    }
   }
 
   cancelAwaken(){
     this.isAwakening = false;
     this.loseLife = 1;
+    caution.style.display = 'none';
   }
 
   canAwaken(){
@@ -779,6 +783,7 @@ const scissors = document.getElementById('scissors');
 const muteki = document.getElementById('muteki');
 const startGameButton = document.getElementById('startGame');
 const bgmButton = document.getElementById('bgm-button');
+const caution = document.getElementById('caution');
 
 function selectRock(){
   return new Promise(resolve => {

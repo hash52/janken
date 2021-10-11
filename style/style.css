@@ -28,6 +28,11 @@
   display: none;
 }
 
+#caution {
+  display: none;
+  color: red;
+}
+
 #special-message {
   opacity: 0;
   transform: rotate( 8deg );
